@@ -53,7 +53,9 @@ LEVELS = [ {t:{es,en}, units:[ {n, total, t:{es:[title,desc],en:[…]}, lessons:
 LESSON_STEPS[id] = "numbers" | [step,…]   // legacy + review lessons; Unit-1 ids use LOOP_STEPS()
 ```
 
-**The lesson loop** (every new lesson): `scene` (audio dialogue + translation toggle — video stand-in) → `chunks` (5–8 phrases, Slow/Natural buttons) → `hp` ×2 (listen → understand; `fast:true` plays at real speed) → `say` (hear manager, respond out loud, SR check w/ typing fallback, skippable) → `rp` (branching role play; rescue options always continue — repeat-slower or jump to `next`) → `summary`.
+**The lesson loop** (every new lesson, 9 interactions — "see it → figure it out → use it → get challenged → use it in a realistic situation"): `hp i:0` (COLD OPEN — choose the meaning, no teaching first) → `scene` (audio dialogue + translation toggle) → `chunks` (5–8 phrases, Slow/Natural buttons) → `fillx` (fill the blank, `SD.fill`) → `bld` (build the sentence from word pills, `SD.bld`, reuses `R.order`) → `hp i:1` (understand; `fast:true` = real speed) → `tf` (true/false, `SD.tf`) → `say` (respond out loud, SR check, skippable) → `rp` (branching role play; rescue options always continue) → `summary`.
+
+**Game layer** (2026-10-06, from Sammi's second research note): `EXTRA` merges fill/bld/tf (+ lesson 21's tapimg/missing) into `SIT`; **XP** — +10 per correct (grade/libFinish/advance), +15 say, +20 role play, mission rounds carry their own; shown in the feedback bar ("Correcto · +10 XP"), summed on the summary, total persisted in localStorage `ll_xp` and shown on the dashboard hero. **Skills** — summaries say "Habilidad desbloqueada" + `SKILLS[nativeLang][id]`. **Object games** — `tapimg` (tap the icon) and `missing` (table setup with dashed empty slots) use the `OBJ` inline SVG icon set (fork/spoon/knife/plate/glass/water/napkin/tray/towel/table, Lucide-style 1.75 stroke); lesson 21 is the showcase. **Mission** (`{type:"mission", d:{en,es}}`) — boss battle with 3 lives + live XP counter: round kinds `pick` (audio→options), `first` (which first?), `tap` (tap board tiles in sequence); fail = retry (re-render resets); end panel "Turno completado" + accuracy; lesson 10 ends in "La hora pico". Still pending from that note: adaptive repetition of missed items, translation fading by level, more missions ("Viernes por la noche", "Alerta de alergia"…), memory/sort/spot-the-mistake types.
 
 Legacy types still available: `vocab`/`pick` (VOCAB sets), `learn/plates/listen/match/type/sentence` (numbers), `lib` (order/ticket/dialogue/map/seq/rapid/dict/speak/conj), `hpx`/`rpx` (hp/rp with inline per-direction `d`). Audio: `speak(text, lang, rate)`, `RATE={slow:.55,nat:1,fast:1.12}`, `speakSeq(lines)` for scenes.
 
@@ -80,13 +82,21 @@ Verified in-browser at 390px, both directions: all 9 lessons open, every step re
 
 Next up: progress persistence in `localStorage` (completed lessons, accuracy, current lesson — `renderHome` currently shows every built lesson as "Empezar"), then build Unit 2 (numbers 1–100, hearing table numbers fast) with Sammi's content.
 
+## Deployment (LIVE 2026-10-06)
+
+- GitHub repo **`supimsam/la-linea`** (public — required for free GitHub Pages; the HTML is view-source on any static host anyway). Push to `main` → Pages redeploys automatically (~30–60s).
+- **Live at https://supimsam.github.io/la-linea/** (root index.html redirects to `demos/course.html`).
+- Commit identity per-command: `git -c user.name="supimsam" -c user.email="11872348+supimsam@users.noreply.github.com" …`; gh CLI at `~/.local/bin/gh`.
+- If Sammi prefers her usual Vercel setup: import the repo at vercel.com/new (1 click, zero config — static site), then the repo could go private. Custom domain TBD — name candidates: Fuego Fluent, Sí Chef, La Línea (lalinea.com is taken).
+
 ## Roadmap after that
 
-1. Progress persistence (`localStorage`): completed lessons, accuracy, current lesson.
-2. Real content for all Unit 1 lessons (Sammi will write/approve; she's the SME). Start with 1.4 Survival phrases — highest value for day-one coworkers.
-3. Split the single file into `index.html` + `app.js` + `content/*.js` once content grows. Keep zero build step.
-4. Deploy: static host (Netlify / GitHub Pages / Cloudflare Pages). Custom domain TBD — name candidates: Fuego Fluent, Sí Chef, La Línea (lalinea.com is taken).
-5. Later: streaks/XP (subtle, adult), a practice mode that re-serves missed items, printable phrase sheet per lesson.
+1. Lesson-completion persistence (`localStorage`): done/cur flags per lesson, accuracy history (XP total already persists as `ll_xp`).
+2. Adaptive repetition: quietly re-serve missed items in later lessons (thirteen/thirty style); translation fading by level.
+3. Build Unit 2 (numbers 1–100, hearing table numbers fast) and more missions ("Viernes por la noche", "Alerta de alergia", "Cliente difícil") — Sammi writes/approves content; collect real phrases from her restaurant first.
+4. More game types from her note: sort (clean/dirty), spot-the-mistake (order vs. what came out), memory pairs.
+5. Split the single file into `index.html` + `app.js` + `content/*.js` once content grows. Keep zero build step.
+6. Later: streaks (subtle, adult), printable phrase sheet per lesson.
 
 ## Working with Sammi
 

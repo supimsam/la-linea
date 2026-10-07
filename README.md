@@ -1,8 +1,10 @@
 # La Línea
 
-Bilingual (English ↔ Spanish) language course for restaurant kitchen staff.
+Bilingual (English ↔ Spanish) language course for restaurant coworkers. Game-based, task-first: rescue phrases, real kitchen audio at slow/natural speed, role plays where asking "can you say that again?" is always a valid move, XP, and shift-simulation missions.
 
-Open `demos/course.html` in a browser to see the working demo — all nine drafted lessons are playable, in both directions. Open `demos/exercise-library.html` to try the exercise types standalone.
+**Live: https://supimsam.github.io/la-linea/** (auto-deploys from `main` via GitHub Pages)
+
+Open `demos/course.html` locally for the same thing. `demos/exercise-library.html` has the exercise types standalone.
 
 Read `CLAUDE.md` first — it has the product rules, design system, content model, and the roadmap.
 
