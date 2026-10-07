@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>La Línea · Kitchen language course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fafaf8; --surface:#ffffff; --ink:#15181d; --ink-2:#4b5361; --ink-3:#8a919c;
+    --line:#e6e8ec; --line-2:#d5d8de;
+    --accent:#0f5c4a; --accent-ink:#ffffff; --accent-soft:#e7f1ee;
+    --ok:#1f7a4d; --ok-soft:#e6f4ec; --err:#b23a3a; --err-soft:#fbecec;
+    --radius:12px; --shadow:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  button{font:inherit;color:inherit;cursor:pointer;background:none;border:none}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+  .hide{display:none!important}
+
+  /* ---------- header ---------- */
+  header{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .nav{display:flex;align-items:center;gap:14px}
+  .nav>button{font-size:14px;font-weight:500;color:var(--ink-2);white-space:nowrap}
+  .brand span{white-space:nowrap}
+  .nav>button:hover{color:var(--ink)}
+  body.in-lesson #nav{display:none}
+  .brand{font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+  .brand i{width:28px;height:28px;border-radius:8px;background:var(--accent);display:inline-block;position:relative}
+  .brand i::after{content:"";position:absolute;left:7px;right:7px;top:13px;height:2px;background:#fff;border-radius:2px;box-shadow:0 -5px 0 #fff,0 5px 0 #fff}
+  .seg{display:flex;border:1px solid var(--line-2);border-radius:8px;overflow:hidden;font-size:13px;font-weight:500;background:#fff}
+  .seg button{padding:7px 11px;color:var(--ink-2)}
+  .seg button.on{background:var(--ink);color:#fff}
+
+  /* ---------- landing ---------- */
+  .land-hero{background:var(--surface);border-bottom:1px solid var(--line);padding:56px 0 48px}
+  h1.big{font-size:40px;max-width:16ch}
+  @media(min-width:600px){h1.big{font-size:52px}}
+  .cta{display:flex;align-items:center;gap:16px;margin-top:26px;flex-wrap:wrap}
+  .cta span{font-size:14px;color:var(--ink-3)}
+  .band{padding:40px 0;border-bottom:1px solid var(--line)}
+  .h2{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:18px}
+  .how{display:grid;gap:14px;margin-top:14px}
+  @media(min-width:600px){.how{grid-template-columns:repeat(3,1fr)}}
+  .how div{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+  .how b{display:block;font-weight:600;margin-bottom:4px}
+  .how p{font-size:14px;color:var(--ink-2)}
+  .how i{display:block;width:32px;height:32px;border-radius:8px;background:var(--accent-soft);color:var(--accent);font-style:normal;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+  .path{list-style:none;display:grid;gap:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+  .path li{display:flex;gap:14px;padding:14px 18px;border-top:1px solid var(--line);align-items:baseline}
+  .path li:first-child{border-top:none}
+  .path li b{font-weight:600}
+  .path li span{font-size:14px;color:var(--ink-3)}
+  .path li em{font-style:normal;font-size:12px;font-weight:600;color:var(--accent);min-width:28px}
+  .two-way{display:grid;gap:22px}
+  @media(min-width:600px){.two-way{grid-template-columns:1.2fr 1fr;align-items:center}}
+  .pair{display:grid;gap:10px}
+  .pair div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+  .pair b{font-weight:700;font-size:13px;letter-spacing:.06em;color:var(--accent)}
+  .pair span{font-size:14px;color:var(--ink-2)}
+  .foot{display:flex;justify-content:space-between;padding:22px 20px;font-size:13px;color:var(--ink-3)}
+
+  /* ---------- course home ---------- */
+  .hero{padding:36px 0 20px}
+  .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px}
+  h1{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-bottom:8px}
+  .lead{color:var(--ink-2);max-width:52ch}
+  .meta{display:flex;gap:22px;margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
+  .meta div b{display:block;font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .meta div span{font-size:13px;color:var(--ink-3)}
+
+  .unit{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin:14px 0;box-shadow:var(--shadow);overflow:hidden}
+  .unit-h{display:flex;align-items:center;gap:14px;padding:16px 18px;border-bottom:1px solid var(--line)}
+  .unit-h .n{width:36px;height:36px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex:none}
+  .unit-h h2{font-size:16px;font-weight:600}
+  .unit-h p{font-size:13px;color:var(--ink-3)}
+  .unit-h .pct{margin-left:auto;font-size:13px;font-weight:600;color:var(--ink-2)}
+  .unit.locked .unit-h .n{background:#f1f2f4;color:var(--ink-3)}
+  .lesson{display:flex;align-items:center;gap:14px;padding:14px 18px;border-top:1px solid var(--line);width:100%;text-align:left}
+  .lesson:first-of-type{border-top:none}
+  .lesson:hover{background:#fcfcfb}
+  .lesson .st{width:22px;height:22px;border-radius:50%;border:2px solid var(--line-2);flex:none;display:flex;align-items:center;justify-content:center}
+  .lesson .st.done{background:var(--ok);border-color:var(--ok)}
+  .lesson .st.cur{border-color:var(--accent);box-shadow:inset 0 0 0 3px #fff;background:var(--accent)}
+  .lesson .t{font-weight:500;font-size:15px}
+  .lesson .d{font-size:13px;color:var(--ink-3)}
+  .lesson .go{margin-left:auto;font-size:13px;font-weight:600;color:var(--accent)}
+  .unit.locked .lesson{opacity:.5;pointer-events:none}
+
+  /* ---------- lesson shell ---------- */
+  .lesson-top{display:flex;align-items:center;gap:14px;height:60px}
+  .lesson-top .x{color:var(--ink-3);display:flex}
+  .prog{flex:1;height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+  .prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s ease}
+  .lesson-top .step{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums;min-width:44px;text-align:right}
+
+  .screen{padding:28px 0 120px;animation:in .25s ease}
+  @keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .kicker{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .q{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-bottom:22px}
+  .q.sm{font-size:20px}
+
+  /* vocab card (Learn) */
+  .vocab{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px 22px;margin-bottom:14px}
+  .vocab .word{font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1;display:flex;align-items:center;gap:14px}
+  .vocab .tr{font-size:18px;color:var(--ink-2);margin-top:6px}
+  .vocab .ex{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);font-size:15px}
+  .vocab .ex b{font-weight:600}
+  .vocab .ex span{display:block;color:var(--ink-3);font-size:14px;margin-top:2px}
+  .play{width:40px;height:40px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;flex:none}
+  .play:active{transform:scale(.95)}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+  .chip{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:left}
+  .chip b{display:block;font-weight:600}
+  .chip span{font-size:13px;color:var(--ink-3)}
+
+  /* plates visual */
+  .plates{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:20px;min-height:120px;align-content:center}
+  .plates svg{width:44px;height:44px;animation:in .3s ease both}
+
+  /* options */
+  .opts{display:grid;gap:10px}
+  .opts.two{grid-template-columns:1fr 1fr}
+  .opt{background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:16px;text-align:left;font-weight:500;font-size:16px;display:flex;align-items:center;gap:12px;transition:border-color .12s,background .12s}
+  .opt .k{width:24px;height:24px;border-radius:6px;border:1px solid var(--line-2);font-size:12px;color:var(--ink-3);display:flex;align-items:center;justify-content:center;flex:none;font-weight:600}
+  .opt:hover{border-color:var(--ink-3)}
+  .opt.sel{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+  .opt.sel .k{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .opt.ok{border-color:var(--ok);background:var(--ok-soft);box-shadow:inset 0 0 0 1px var(--ok)}
+  .opt.err{border-color:var(--err);background:var(--err-soft);box-shadow:inset 0 0 0 1px var(--err)}
+  .opt:disabled{cursor:default}
+
+  /* typed answer */
+  .field{width:100%;font:inherit;font-size:20px;font-weight:500;padding:16px;border:1px solid var(--line-2);border-radius:10px;background:var(--surface);outline:none}
+  .field:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .field.ok{border-color:var(--ok)} .field.err{border-color:var(--err)}
+  .hint{font-size:13px;color:var(--ink-3);margin-top:8px}
+
+  /* match pairs */
+  .match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .match .opt{justify-content:center;text-align:center}
+  .match .opt.gone{opacity:.35;pointer-events:none}
+
+  /* bottom action bar */
+  .bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);z-index:9}
+  .bar .wrap{display:flex;align-items:center;gap:14px;padding:14px 20px;padding-bottom:max(14px,env(safe-area-inset-bottom))}
+  .bar.ok{background:var(--ok-soft);border-color:#cfe7d8} .bar.err{background:var(--err-soft);border-color:#f0cfcf}
+  .fb{flex:1;min-width:0}
+  .fb b{display:block;font-weight:600}
+  .bar.ok .fb b{color:var(--ok)} .bar.err .fb b{color:var(--err)}
+  .fb span{font-size:14px;color:var(--ink-2)}
+  .btn{background:var(--accent);color:var(--accent-ink);font-weight:600;padding:13px 22px;border-radius:10px;min-width:130px;transition:opacity .12s}
+  .btn:disabled{opacity:.35;cursor:default}
+  .btn.ghost{background:transparent;color:var(--ink-2);border:1px solid var(--line-2);min-width:0}
+  .bar.err .btn{background:var(--err)} .bar.ok .btn{background:var(--ok)}
+
+  /* summary */
+  .sum{text-align:center;padding-top:40px}
+  .sum .ring{width:120px;height:120px;margin:0 auto 20px;position:relative}
+  .sum .ring svg{transform:rotate(-90deg)}
+  .sum .ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .sum h2{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+  .sum p{color:var(--ink-2);margin-bottom:24px}
+  .rows{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:20px}
+  .rows div{display:flex;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--line);font-size:14px}
+  .rows div:first-child{border-top:none}
+  .rows div span{color:var(--ink-3)}
+  .rows div b{font-weight:600}
+  .rows .miss b{color:var(--err)}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <button class="brand" onclick="goLanding()"><i></i><span id="brandName">La Línea</span></button>
+  <nav class="nav" id="nav">
+    <button id="navCourse" onclick="goHome()"></button>
+    <div class="seg" id="langSeg">
+      <button class="on" data-l="en">English</button>
+      <button data-l="es">Español</button>
+    </div>
+  </nav>
+</div></header>
+
+<!-- ============ LANDING ============ -->
+<main id="landing">
+  <section class="land-hero"><div class="wrap">
+    <div class="eyebrow" id="l-eyebrow"></div>
+    <h1 class="big" id="l-title"></h1>
+    <p class="lead" id="l-lead"></p>
+    <div class="cta">
+      <button class="btn" onclick="goHome()" id="l-cta"></button>
+      <span id="l-free"></span>
+    </div>
+  </div></section>
+
+  <section class="wrap band">
+    <div class="eyebrow" id="l-howk"></div>
+    <div class="how" id="l-how"></div>
+  </section>
+
+  <section class="wrap band">
+    <div class="eyebrow" id="l-pathk"></div>
+    <h2 class="h2" id="l-patht"></h2>
+    <ol class="path" id="l-path"></ol>
+  </section>
+
+  <section class="wrap band two-way">
+    <div><div class="eyebrow" id="l-twok"></div><h2 class="h2" id="l-twot"></h2><p class="lead" id="l-twol"></p></div>
+    <div class="pair"><div><b>EN → ES</b><span id="l-pa"></span></div><div><b>ES → EN</b><span id="l-pb"></span></div></div>
+  </section>
+
+  <footer class="wrap foot"><span id="brandFoot"></span><span id="l-foot"></span></footer>
+</main>
+
+<!-- ============ COURSE HOME ============ -->
+<main id="home" class="wrap hide">
+  <section class="hero">
+    <div class="eyebrow" id="h-eyebrow"></div>
+    <h1 id="h-title"></h1>
+    <p class="lead" id="h-lead"></p>
+    <div class="meta">
+      <div><b>6</b><span id="h-m1"></span></div>
+      <div><b>24</b><span id="h-m2"></span></div>
+      <div><b>~10 min</b><span id="h-m3"></span></div>
+    </div>
+  </section>
+  <div id="units"></div>
+</main>
+
+<!-- ============ LESSON ============ -->
+<div id="lesson" class="hide">
+  <div class="wrap lesson-top">
+    <button class="x" onclick="goHome()" aria-label="Exit"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="prog"><i id="progFill"></i></div>
+    <div class="step" id="stepLabel"></div>
+  </div>
+  <div class="wrap"><div id="screen" class="screen"></div></div>
+  <div class="bar" id="bar"><div class="wrap">
+    <div class="fb" id="fb"></div>
+    <button class="btn" id="primary"></button>
+  </div></div>
+</div>
+
+<script>
+/* =========================================================
+   CONTENT  — direction: "en" = learner studies English (UI in Spanish)
+                         "es" = learner studies Spanish (UI in English)
+   ========================================================= */
+const NUM = {
+  en:["one","two","three","four","five","six","seven","eight","nine","ten"],
+  es:["uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez"]
+};
+const EXAMPLES = {
+  en:[["I need one plate.","Necesito un plato."],["Two orders are ready.","Dos pedidos están listos."],["Three tickets on the board.","Tres comandas en la pantalla."],["Four covers at table nine.","Cuatro personas en la mesa nueve."],["Five minutes on the salmon.","Cinco minutos para el salmón."],["Six eggs, please.","Seis huevos, por favor."],["Seven dishes in the pass.","Siete platos en el pase."],["Table eight is waiting.","La mesa ocho está esperando."],["Nine limes for the bar.","Nueve limones para la barra."],["Ten minutes to open.","Diez minutos para abrir."]],
+  es:[["Necesito un plato.","I need one plate."],["Dos pedidos están listos.","Two orders are ready."],["Tres comandas en la pantalla.","Three tickets on the board."],["Cuatro personas en la mesa nueve.","Four covers at table nine."],["Cinco minutos para el salmón.","Five minutes on the salmon."],["Seis huevos, por favor.","Six eggs, please."],["Siete platos en el pase.","Seven dishes in the pass."],["La mesa ocho está esperando.","Table eight is waiting."],["Nueve limones para la barra.","Nine limes for the bar."],["Diez minutos para abrir.","Ten minutes to open."]]
+};
+/* UI strings keyed by the learner's NATIVE language (the one the interface speaks) */
+const UI = {
+  es:{ eyebrow:"Curso de inglés · Nivel A1", title:"Inglés para la cocina", lead:"Un curso estructurado de inglés para quienes trabajan en restaurantes. Fundamentos reales del idioma, con ejemplos tomados del trabajo diario.",
+       m1:"unidades", m2:"lecciones", m3:"por lección",
+       units:[["Fundamentos","Saludos, números, lo básico"],["Verbos esenciales","Necesitar, querer, tener, ir"],["Preguntas e instrucciones","Pedir, ubicar, indicar"],["Tiempo y secuencia","Primero, ahora, rápido, espera"],["En el servicio","Conversaciones reales del turno"],["Repaso","Evaluación de nivel"]],
+       lessons:[["Saludos y presentaciones","done"],["Números del 1 al 10","cur"],["Días y horarios","todo"],["Frases de supervivencia","todo"]],
+       start:"Continuar", review:"Repasar", done:"Completada",
+       learn:"Aprender", practice:"Practicar", check:"Comprobar", next:"Continuar", finish:"Terminar", skip:"Omitir",
+       kLearn:"Vocabulario", kPlates:"Comprensión", kListen:"Escuchar", kType:"Escribir", kMatch:"Relacionar", kSentence:"En contexto",
+       qLearn:"Números del 1 al 10", qPlates:"¿Cuántos platos hay?", qListen:"¿Qué número escuchaste?", qType:"Escribe el número en inglés", qMatch:"Relaciona los pares", qSentence:"Completa la frase",
+       typeHint:"Escribe la palabra, no la cifra.",
+       correct:"Correcto", incorrect:"Respuesta correcta:",
+       sumTitle:"Lección completada", sumSub:"Números del 1 al 10", acc:"Precisión", items:"Ejercicios", missed:"Para repasar", back:"Volver al curso", none:"Nada pendiente",
+       stepOf:(a,b)=>`${a} / ${b}`,
+       nav:"Mi curso", exercises:"6 ejercicios",
+       lEyebrow:"Inglés para restaurantes · Gratis", lTitle:"Aprende inglés con el vocabulario de tu cocina.", lLead:"Un curso real de idiomas, no una lista de palabras. Empieza por lo básico y avanza hasta mantener conversaciones de turno, con ejemplos tomados del trabajo que ya haces.",
+       lCta:"Empezar el curso", lFree:"Sin cuenta. Sin costo.",
+       lHowk:"Cómo funciona", lHow:[["Aprende","Vocabulario con audio y una frase de ejemplo tomada de la cocina."],["Practica","Ejercicios de comprensión, escucha, escritura y relación de pares."],["Avanza","Seis unidades, de los fundamentos a conversaciones reales del servicio."]],
+       lPathk:"Plan de estudios", lPatht:"Seis unidades, nivel A1 → A2",
+       lTwok:"En los dos sentidos", lTwot:"Tus compañeros aprenden inglés. Tú aprendes español.", lTwol:"El mismo curso en ambas direcciones, para que puedan practicar juntos en el trabajo.",
+       lPa:"Para quienes hablan inglés y quieren aprender español.", lPb:"Para quienes hablan español y quieren aprender inglés.",
+       lFoot:"Hecho en una cocina, para cocinas." },
+  en:{ eyebrow:"Spanish course · Level A1", title:"Spanish for the kitchen", lead:"A structured Spanish course for people who work in restaurants. Real language fundamentals, with examples drawn from the daily work.",
+       m1:"units", m2:"lessons", m3:"per lesson",
+       units:[["Foundations","Greetings, numbers, the basics"],["Essential verbs","Need, want, have, go"],["Questions & instructions","Asking, locating, directing"],["Time & sequence","First, now, quickly, wait"],["On the floor","Real shift conversations"],["Review","Level assessment"]],
+       lessons:[["Greetings & introductions","done"],["Numbers 1–10","cur"],["Days & schedules","todo"],["Survival phrases","todo"]],
+       start:"Continue", review:"Review", done:"Completed",
+       learn:"Learn", practice:"Practice", check:"Check", next:"Continue", finish:"Finish", skip:"Skip",
+       kLearn:"Vocabulary", kPlates:"Comprehension", kListen:"Listening", kType:"Writing", kMatch:"Matching", kSentence:"In context",
+       qLearn:"Numbers 1–10", qPlates:"How many plates are there?", qListen:"Which number did you hear?", qType:"Type the number in Spanish", qMatch:"Match the pairs", qSentence:"Complete the sentence",
+       typeHint:"Type the word, not the digit.",
+       correct:"Correct", incorrect:"Correct answer:",
+       sumTitle:"Lesson complete", sumSub:"Numbers 1–10", acc:"Accuracy", items:"Exercises", missed:"To review", back:"Back to course", none:"Nothing to review",
+       stepOf:(a,b)=>`${a} / ${b}`,
+       nav:"My course", exercises:"6 exercises",
+       lEyebrow:"Spanish for restaurants · Free", lTitle:"Learn Spanish with the vocabulary of your own kitchen.", lLead:"A real language course, not a word list. Start with the basics and work up to holding a conversation mid-shift, with examples drawn from the work you already do.",
+       lCta:"Start the course", lFree:"No account. No cost.",
+       lHowk:"How it works", lHow:[["Learn","Vocabulary with audio and one example sentence from the kitchen."],["Practice","Comprehension, listening, writing and matching exercises."],["Progress","Six units, from the fundamentals to real shift conversations."]],
+       lPathk:"Curriculum", lPatht:"Six units, level A1 → A2",
+       lTwok:"Both directions", lTwot:"Your coworkers learn English. You learn Spanish.", lTwol:"The same course in both directions, so you can practice together at work.",
+       lPa:"For English speakers learning Spanish.", lPb:"For Spanish speakers learning English.",
+       lFoot:"Made in a kitchen, for kitchens." }
+};
+const VOICE = {en:"en-US", es:"es-MX"};
+
+/* =========================================================
+   STATE
+   ========================================================= */
+let target="en";           // language being learned
+let native=()=>target==="en"?"es":"en";
+let T=()=>UI[native()];
+let steps=[], idx=0, results=[], picked=null, locked=false;
+
+const $=s=>document.querySelector(s);
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+const strip=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
+
+function speak(word, lang=target){
+  if(!("speechSynthesis" in window))return;
+  const u=new SpeechSynthesisUtterance(word);u.lang=VOICE[lang];u.rate=.9;
+  speechSynthesis.cancel();speechSynthesis.speak(u);
+}
+const PLATE=`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#d5d8de" stroke-width="2"/><circle cx="32" cy="32" r="20" fill="none" stroke="#d5d8de" stroke-width="1.5"/></svg>`;
+const SPK=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg>`;
+
+/* =========================================================
+   HOME
+   ========================================================= */
+function setTarget(l){
+  target=l;
+  document.querySelectorAll("#langSeg button").forEach(b=>b.classList.toggle("on",b.dataset.l===l));
+  document.documentElement.lang=native();
+  renderHome();
+}
+function renderLanding(){
+  const t=T();
+  $("#navCourse").textContent=t.nav;
+  $("#langSeg").dataset.label=native()==="es"?"Aprendo":"Learning";
+  $("#l-eyebrow").textContent=t.lEyebrow; $("#l-title").textContent=t.lTitle; $("#l-lead").textContent=t.lLead;
+  $("#l-cta").textContent=t.lCta; $("#l-free").textContent=t.lFree;
+  $("#l-howk").textContent=t.lHowk;
+  $("#l-how").innerHTML=t.lHow.map(([b,p],i)=>`<div><i>0${i+1}</i><b>${b}</b><p>${p}</p></div>`).join("");
+  $("#l-pathk").textContent=t.lPathk; $("#l-patht").textContent=t.lPatht;
+  $("#l-path").innerHTML=t.units.map(([n,d],i)=>`<li><em>U${i+1}</em><div><b>${n}</b><br><span>${d}</span></div></li>`).join("");
+  $("#l-twok").textContent=t.lTwok; $("#l-twot").textContent=t.lTwot; $("#l-twol").textContent=t.lTwol;
+  $("#l-pa").textContent=t.lPa; $("#l-pb").textContent=t.lPb;
+  $("#brandFoot").textContent=$("#brandName").textContent; $("#l-foot").textContent=t.lFoot;
+}
+function renderHome(){
+  const t=T(); renderLanding();
+  $("#h-eyebrow").textContent=t.eyebrow; $("#h-title").textContent=t.title; $("#h-lead").textContent=t.lead;
+  $("#h-m1").textContent=t.m1; $("#h-m2").textContent=t.m2; $("#h-m3").textContent=t.m3;
+  const u=$("#units"); u.innerHTML="";
+  t.units.forEach(([name,desc],i)=>{
+    const el=document.createElement("section"); el.className="unit"+(i>0?" locked":"");
+    let body="";
+    if(i===0){
+      body=t.lessons.map(([title,st],j)=>`
+        <button class="lesson" ${st==="cur"?`onclick="startLesson()"`:""}>
+          <span class="st ${st}">${st==="done"?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>`:""}</span>
+          <span><span class="t">1.${j+1} · ${title}</span><br><span class="d">${st==="done"?t.done:t.exercises}</span></span>
+          ${st==="cur"?`<span class="go">${t.start} →</span>`:st==="done"?`<span class="go" style="color:var(--ink-3)">${t.review}</span>`:""}
+        </button>`).join("");
+    }
+    el.innerHTML=`<div class="unit-h"><div class="n">${i+1}</div><div><h2>${name}</h2><p>${desc}</p></div><div class="pct">${i===0?"25%":""}</div></div>${body}`;
+    u.appendChild(el);
+  });
+}
+document.querySelectorAll("#langSeg button").forEach(b=>b.onclick=()=>setTarget(b.dataset.l));
+
+/* =========================================================
+   LESSON  — build a sequence of exercise steps
+   ========================================================= */
+function startLesson(){
+  const n=k=>NUM[target][k], o=k=>NUM[native()][k];
+  const pick=()=>Math.floor(Math.random()*10);
+  const a=pick(), b=pick(), c=pick(), d=pick(), e=pick();
+  steps=[
+    {type:"learn"},
+    {type:"plates", n:a},
+    {type:"listen", n:b},
+    {type:"match"},
+    {type:"type", n:c},
+    {type:"sentence", n:d},
+    {type:"plates", n:e},
+    {type:"summary"}
+  ];
+  idx=0; results=[];
+  $("#home").classList.add("hide"); $("#lesson").classList.remove("hide"); document.body.classList.add("in-lesson");
+  window.scrollTo(0,0);
+  render();
+}
+function goHome(){ $("#landing").classList.add("hide"); $("#lesson").classList.add("hide"); $("#home").classList.remove("hide"); document.body.classList.remove("in-lesson"); window.scrollTo(0,0); if(window.speechSynthesis)speechSynthesis.cancel(); }
+function goLanding(){ $("#home").classList.add("hide"); $("#lesson").classList.add("hide"); $("#landing").classList.remove("hide"); document.body.classList.remove("in-lesson"); window.scrollTo(0,0); }
+
+function setBar(state, title, text, btn, fn){
+  const bar=$("#bar"); bar.className="bar"+(state?" "+state:"");
+  $("#fb").innerHTML=title?`<b>${title}</b>${text?`<span>${text}</span>`:""}`:"";
+  const p=$("#primary"); p.textContent=btn; p.onclick=fn; p.disabled=false; p.className="btn";
+}
+function disablePrimary(){ $("#primary").disabled=true; }
+
+function render(){
+  const t=T(), s=steps[idx], total=steps.length-1; // summary not counted
+  picked=null; locked=false;
+  $("#progFill").style.width=(idx/total*100)+"%";
+  $("#stepLabel").textContent=s.type==="summary"?"":t.stepOf(idx+1,total);
+  const sc=$("#screen"); sc.className="screen"; void sc.offsetWidth; // restart anim
+  const L=target, O=native();
+  const n=k=>NUM[L][k], o=k=>NUM[O][k];
+
+  if(s.type==="learn"){
+    sc.innerHTML=`<div class="kicker">${t.kLearn}</div><div class="q">${t.qLearn}</div>
+      <div class="vocab" id="vcard"></div>
+      <div class="grid3">${NUM[L].map((w,i)=>`<button class="chip" onclick="showWord(${i})"><b>${w}</b><span>${o(i)}</span></button>`).join("")}</div>`;
+    showWord(0);
+    setBar("", "", "", t.practice+" →", ()=>advance(null));
+  }
+
+  if(s.type==="plates"){
+    const opts=shuffle(distractors(s.n));
+    sc.innerHTML=`<div class="kicker">${t.kPlates}</div><div class="q">${t.qPlates}</div>
+      <div class="plates">${Array.from({length:s.n+1},(_,i)=>PLATE.replace("<svg",`<svg style="animation-delay:${i*40}ms"`)).join("")}</div>
+      <div class="opts two">${opts.map((k,i)=>`<button class="opt" data-k="${k}" onclick="choose(${k},this)"><span class="k">${i+1}</span>${n(k)}</button>`).join("")}</div>`;
+    setBar("", "", "", t.check, ()=>grade(picked===s.n, n(s.n), o(s.n))); disablePrimary();
+  }
+
+  if(s.type==="listen"){
+    const opts=shuffle(distractors(s.n));
+    sc.innerHTML=`<div class="kicker">${t.kListen}</div><div class="q">${t.qListen}</div>
+      <div style="display:flex;justify-content:center;margin-bottom:24px"><button class="play" style="width:72px;height:72px" onclick="speak('${n(s.n)}')">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button></div>
+      <div class="opts two">${opts.map((k,i)=>`<button class="opt" data-k="${k}" onclick="choose(${k},this)"><span class="k">${i+1}</span>${n(k)}</button>`).join("")}</div>`;
+    setTimeout(()=>speak(n(s.n)),350);
+    setBar("", "", "", t.check, ()=>grade(picked===s.n, n(s.n), o(s.n))); disablePrimary();
+  }
+
+  if(s.type==="type"){
+    sc.innerHTML=`<div class="kicker">${t.kType}</div><div class="q">${t.qType}</div>
+      <div class="vocab" style="padding:18px 22px"><div class="word" style="font-size:32px">${s.n+1}<span style="font-size:18px;color:var(--ink-3);font-weight:500">· ${o(s.n)}</span></div></div>
+      <input class="field" id="typed" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="…">
+      <div class="hint">${t.typeHint}</div>`;
+    const f=$("#typed"); f.oninput=()=>{ $("#primary").disabled=!f.value.trim(); };
+    f.onkeydown=e=>{ if(e.key==="Enter"&&!$("#primary").disabled)$("#primary").click(); };
+    setTimeout(()=>f.focus(),100);
+    setBar("", "", "", t.check, ()=>{
+      const ok=strip(f.value)===strip(n(s.n));
+      f.classList.add(ok?"ok":"err"); f.disabled=true;
+      grade(ok, n(s.n), o(s.n));
+    }); disablePrimary();
+  }
+
+  if(s.type==="match"){
+    const ks=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,5);
+    const left=shuffle(ks), right=shuffle(ks);
+    sc.innerHTML=`<div class="kicker">${t.kMatch}</div><div class="q">${t.qMatch}</div>
+      <div class="match">
+        <div class="opts">${left.map(k=>`<button class="opt" data-side="a" data-k="${k}" onclick="matchPick(this)">${n(k)}</button>`).join("")}</div>
+        <div class="opts">${right.map(k=>`<button class="opt" data-side="b" data-k="${k}" onclick="matchPick(this)">${o(k)}</button>`).join("")}</div>
+      </div>`;
+    s.remaining=5; s.misses=0; s.first=null;
+    setBar("", "", "", t.next, ()=>advance(s.misses===0)); disablePrimary();
+  }
+
+  if(s.type==="sentence"){
+    const [sent, trans]=EXAMPLES[L][s.n];
+    const word=n(s.n);
+    const blanked=sent.replace(new RegExp(word,"i"),"_____");
+    const opts=shuffle(distractors(s.n));
+    sc.innerHTML=`<div class="kicker">${t.kSentence}</div><div class="q sm">${t.qSentence}</div>
+      <div class="vocab"><div class="word" style="font-size:24px;line-height:1.3">${blanked}</div><div class="tr">${trans}</div></div>
+      <div class="opts two">${opts.map((k,i)=>`<button class="opt" data-k="${k}" onclick="choose(${k},this)"><span class="k">${i+1}</span>${n(k)}</button>`).join("")}</div>`;
+    setBar("", "", "", t.check, ()=>grade(picked===s.n, n(s.n), o(s.n), sent)); disablePrimary();
+  }
+
+  if(s.type==="summary"){
+    $("#progFill").style.width="100%";
+    const graded=results.filter(r=>r!==null), right=graded.filter(r=>r.ok).length, pct=Math.round(right/graded.length*100);
+    const missed=graded.filter(r=>!r.ok);
+    const C=2*Math.PI*52;
+    sc.innerHTML=`<div class="sum">
+      <div class="ring"><svg width="120" height="120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="10"/><circle cx="60" cy="60" r="52" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}" style="transition:stroke-dashoffset 1s ease"/></svg><b>${pct}%</b></div>
+      <h2>${t.sumTitle}</h2><p>${t.sumSub}</p>
+      <div class="rows">
+        <div><span>${t.acc}</span><b>${right} / ${graded.length}</b></div>
+        <div><span>${t.items}</span><b>${graded.length}</b></div>
+        ${missed.length?missed.map(m=>`<div class="miss"><span>${t.missed}</span><b>${m.word} · ${m.other}</b></div>`).join(""):`<div><span>${t.missed}</span><b>${t.none}</b></div>`}
+      </div></div>`;
+    setBar("", "", "", t.back, goHome);
+  }
+}
+
+function distractors(n){
+  const set=new Set([n]);
+  while(set.size<4){const d=n+Math.floor(Math.random()*7)-3; if(d>=0&&d<=9)set.add(d);}
+  return [...set];
+}
+function showWord(i){
+  const L=target, O=native(), [ex,tr]=EXAMPLES[L][i];
+  $("#vcard").innerHTML=`<div class="word">${NUM[L][i]}<button class="play" onclick="speak('${NUM[L][i]}')">${SPK}</button></div>
+    <div class="tr">${NUM[O][i]}</div>
+    <div class="ex"><b>${ex}</b><span>${tr}</span></div>`;
+  speak(NUM[L][i]);
+}
+function choose(k,el){
+  if(locked)return; picked=k;
+  document.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel")); el.classList.add("sel");
+  $("#primary").disabled=false;
+}
+function matchPick(el){
+  const s=steps[idx];
+  if(!s.first){ s.first=el; el.classList.add("sel"); return; }
+  if(s.first===el){ el.classList.remove("sel"); s.first=null; return; }
+  if(s.first.dataset.side===el.dataset.side){ s.first.classList.remove("sel"); s.first=el; el.classList.add("sel"); return; }
+  const ok=s.first.dataset.k===el.dataset.k;
+  const a=s.first; s.first=null;
+  if(ok){
+    [a,el].forEach(x=>{x.classList.remove("sel");x.classList.add("ok");setTimeout(()=>{x.classList.remove("ok");x.classList.add("gone");},350);});
+    speak(NUM[target][+el.dataset.k]);
+    if(--s.remaining===0){ $("#primary").disabled=false; }
+  }else{
+    s.misses++;
+    [a,el].forEach(x=>{x.classList.remove("sel");x.classList.add("err");setTimeout(()=>x.classList.remove("err"),450);});
+  }
+}
+function grade(ok, word, other, sentence){
+  const t=T(); locked=true;
+  document.querySelectorAll(".opt").forEach(b=>{
+    b.disabled=true;
+    if(+b.dataset.k===steps[idx].n)b.classList.add("ok"); else if(b.classList.contains("sel"))b.classList.add("err");
+    b.classList.remove("sel");
+  });
+  results.push({ok, word, other});
+  speak(word);
+  setBar(ok?"ok":"err", ok?t.correct:`${t.incorrect} ${word}`, sentence?sentence:`${word} · ${other}`, t.next, ()=>{idx++;render();window.scrollTo(0,0);});
+}
+function advance(ok){
+  if(ok!==null&&ok!==undefined) results.push(ok?{ok:true,word:"",other:""}:{ok:false,word:T().kMatch,other:""});
+  idx++; render(); window.scrollTo(0,0);
+}
+
+/* keyboard shortcuts 1-4 on choice screens */
+document.addEventListener("keydown",e=>{
+  if($("#lesson").classList.contains("hide"))return;
+  const k=+e.key; if(k>=1&&k<=4){const b=document.querySelectorAll(".opts.two .opt")[k-1]; if(b&&!b.disabled)b.click();}
+  if(e.key==="Enter"&&document.activeElement.tagName!=="INPUT"&&!$("#primary").disabled)$("#primary").click();
+});
+
+setTarget("en");
+</script>
+</body>
+</html>

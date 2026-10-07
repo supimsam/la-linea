@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>La Línea · Kitchen language course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ════════════════════════════════════════════════════════════════
+     La Línea · sammi-ui "floating pills" restyle (green/white/black)
+     Variants: html[data-v] — a: ink primaries · b: green primaries ·
+     c: ink primaries + green gradient signature (orb/progress/hero CTA)
+     ════════════════════════════════════════════════════════════════ */
+  :root{
+    --font:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    --bg:#ffffff; --card:#ffffff; --fg:#0a0a0a; --muted:#737373; --muted2:rgba(115,115,115,.5);
+    --ink:#111110;
+    --line:rgba(0,0,0,.08); --bsoft:#e7e5e4;
+    --field:rgba(245,245,244,.7); --field-inset:inset 0 1px 2px rgba(28,25,23,.07);
+    --input:rgba(0,0,0,.04); --soft:rgba(28,25,23,.05); --hover:rgba(0,0,0,.04); --active:rgba(0,0,0,.06);
+    --accent:#0f5c4a; --accent-ink:#ffffff; --accent-soft:#e7f1ee;
+    --grad:linear-gradient(135deg,#0f5c4a,#2fa06a); --cta:var(--grad);
+    --ok:#1f7a4d; --ok-soft:#e6f4ec; --err:#b23a3a; --err-soft:#fbecec; --warn:#b8741a; --warn-soft:#fdf3e3;
+    --pill-shadow:0 10px 30px -12px rgba(28,25,23,.22),0 2px 6px -2px rgba(28,25,23,.06);
+    --tile-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.14);
+    --radius:20px; --r-pill:999px; --r-tile:18px; --r-field:12px;
+    --ease:cubic-bezier(.2,.8,.2,1);
+    /* legacy aliases used by inline SVG/JS */
+    --line-2:#d5d8de; --shadow:var(--tile-shadow);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{font-family:var(--font);color:var(--fg);background:var(--bg);font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased;font-feature-settings:"tnum" 1}
+  button{font:inherit;color:inherit;cursor:pointer;background:none;border:none}
+  .wrap{max-width:720px;margin:0 auto;padding:0 16px}
+  .hide{display:none!important}
+  @media(max-width:767px){input,select,textarea{font-size:16px}}
+
+  /* ---------- header: floating frosted pill bar ---------- */
+  header{position:sticky;top:calc(10px + env(safe-area-inset-top));z-index:10;margin:12px 12px 0}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;height:58px;max-width:720px;padding:0 10px 0 16px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--card) 88%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--pill-shadow)}
+  @supports not (background:color-mix(in srgb,#fff 88%,transparent)){header .wrap{background:rgba(255,255,255,.88)}}
+  .nav{display:flex;align-items:center;gap:12px}
+  .nav>button{font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;height:36px;padding:0 10px;border-radius:var(--r-pill)}
+  .nav>button:hover{color:var(--fg);background:var(--hover)}
+  .brand span{white-space:nowrap}
+  body.in-lesson #nav{display:none}
+  .brand{font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;font-size:15px}
+  .brand i{width:30px;height:30px;border-radius:var(--r-pill);background:var(--grad);display:inline-block;position:relative;box-shadow:inset 0 -2px 6px rgba(0,0,0,.14),0 4px 12px -6px rgba(15,92,74,.55)}
+  .brand i::after{content:"";position:absolute;left:8px;right:8px;top:14px;height:2px;background:#fff;border-radius:2px;box-shadow:0 -5px 0 #fff,0 5px 0 #fff}
+  .seg{display:flex;gap:2px;padding:3px;border-radius:var(--r-pill);background:var(--input);font-size:13px;font-weight:500}
+  .seg button{height:32px;padding:0 13px;border-radius:var(--r-pill);color:var(--muted);transition:background .15s,color .15s}
+  .seg button.on{background:var(--ink);color:var(--bg)}
+
+  /* ---------- landing ---------- */
+  .land-hero{padding:48px 0 40px}
+  h1.big{font-size:34px;font-weight:600;letter-spacing:-.025em;line-height:1.12;max-width:16ch}
+  @media(min-width:600px){h1.big{font-size:46px}}
+  .cta{display:flex;align-items:center;gap:16px;margin-top:26px;flex-wrap:wrap}
+  .cta .btn{background:var(--cta)}
+  .cta span{font-size:13px;color:var(--muted)}
+  .band{padding-top:30px;padding-bottom:30px;border:0} /* vertical only — .wrap keeps the 16px gutter */
+  .h2{font-size:22px;font-weight:600;letter-spacing:-.02em;margin-bottom:16px}
+  .how{display:grid;gap:12px;margin-top:12px}
+  @media(min-width:600px){.how{grid-template-columns:repeat(3,1fr)}}
+  .how div{background:var(--card);border:0;border-radius:var(--r-tile);padding:16px;box-shadow:var(--tile-shadow)}
+  .how b{display:block;font-weight:600;margin-bottom:3px}
+  .how p{font-size:13.5px;color:var(--muted)}
+  .how i{width:36px;height:36px;border-radius:11px;background:var(--accent-soft);color:var(--accent);font-style:normal;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+  .path{list-style:none;display:grid;gap:0;border:0;border-radius:var(--radius);background:var(--card);overflow:hidden;box-shadow:var(--pill-shadow);padding:2px 0}
+  .path li{display:flex;gap:14px;padding:13px 18px;border-top:1px solid var(--line);align-items:baseline}
+  .path li:first-child{border-top:none}
+  .path li b{font-weight:600}
+  .path li span{font-size:13px;color:var(--muted)}
+  .path li em{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--accent);min-width:28px}
+  .two-way{display:grid;gap:22px}
+  @media(min-width:600px){.two-way{grid-template-columns:1.2fr 1fr;align-items:center}}
+  .pair{display:grid;gap:10px}
+  .pair div{background:var(--card);border:0;border-radius:var(--r-tile);padding:14px 16px;display:flex;flex-direction:column;gap:2px;box-shadow:var(--tile-shadow)}
+  .pair b{font-weight:700;font-size:12px;letter-spacing:.08em;color:var(--accent)}
+  .pair span{font-size:13.5px;color:var(--muted)}
+  .foot{display:flex;justify-content:space-between;padding:26px 20px calc(86px + env(safe-area-inset-bottom));font-size:12.5px;color:var(--muted2)}
+
+  /* ---------- course home ---------- */
+  .hero{padding:32px 0 16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  h1{font-size:28px;font-weight:600;letter-spacing:-.025em;line-height:1.15;margin-bottom:8px}
+  .lead{color:var(--muted);max-width:52ch}
+  .meta{display:flex;gap:26px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+  .meta div b{display:block;font-size:22px;font-weight:600;letter-spacing:-.02em}
+  .meta div span{font-size:12px;color:var(--muted)}
+  #home{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+
+  .unit{background:var(--card);border:0;border-radius:var(--radius);margin:14px 0;box-shadow:var(--pill-shadow);overflow:hidden}
+  .unit-h{display:flex;align-items:center;gap:13px;padding:15px 18px;border-bottom:1px solid var(--line)}
+  .unit-h .n{width:36px;height:36px;border-radius:11px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13.5px;display:flex;align-items:center;justify-content:center;flex:none}
+  .unit-h h2{font-size:15.5px;font-weight:600}
+  .unit-h p{font-size:12.5px;color:var(--muted)}
+  .unit-h .pct{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--muted)}
+  .unit.locked .unit-h .n{background:var(--soft);color:var(--muted)}
+  .lesson{display:flex;align-items:center;gap:13px;padding:13px 18px;border-top:1px solid var(--line);width:100%;text-align:left;transition:background .15s}
+  .lesson:first-of-type{border-top:none}
+  .lesson:hover{background:var(--hover)}
+  .lesson .st{width:24px;height:24px;border-radius:var(--r-pill);border:1.5px solid rgba(128,128,128,.35);flex:none;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s}
+  .lesson .st.done{background:var(--accent);border-color:var(--accent)}
+  .lesson .st.cur{border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--card);background:var(--accent)}
+  .lesson .t{font-weight:600;font-size:14.5px}
+  .lesson .d{font-size:12px;color:var(--muted)}
+  .lesson .go{margin-left:auto;font-size:13px;font-weight:600;color:var(--accent);white-space:nowrap}
+  .unit.locked .lesson{opacity:.5;pointer-events:none}
+
+  /* ---------- lesson shell ---------- */
+  .lesson-top{display:flex;align-items:center;gap:12px;height:58px}
+  .lesson-top .x{color:var(--muted);display:grid;place-items:center;width:36px;height:36px;margin-left:-8px;border-radius:var(--r-pill);transition:background .15s,color .15s}
+  .lesson-top .x:hover{background:var(--hover);color:var(--fg)}
+  .prog{flex:1;height:5px;background:var(--active);border-radius:99px;overflow:hidden}
+  .prog i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width .4s var(--ease)}
+  .lesson-top .step{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:44px;text-align:right}
+
+  .screen{padding:24px 0 160px;animation:in .45s var(--ease) both}
+  @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .kicker{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .q{font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.2;margin-bottom:20px}
+  .q.sm{font-size:19px}
+
+  /* vocab card (Learn) */
+  .vocab{background:var(--card);border:0;border-radius:var(--radius);box-shadow:var(--pill-shadow);padding:24px 22px;margin-bottom:14px}
+  .vocab .word{font-size:36px;font-weight:600;letter-spacing:-.03em;line-height:1.05;display:flex;align-items:center;gap:14px}
+  .vocab .tr{font-size:17px;color:var(--muted);margin-top:6px}
+  .vocab .ex{margin-top:18px;padding-top:15px;border-top:1px solid var(--line);font-size:14.5px}
+  .vocab .ex b{font-weight:600}
+  .vocab .ex span{display:block;color:var(--muted);font-size:13.5px;margin-top:2px}
+  .play{width:40px;height:40px;border-radius:var(--r-pill);background:var(--accent-soft);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;flex:none;transition:transform .1s}
+  .play:active{transform:scale(.94)}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+  .chip{background:var(--card);border:0;border-radius:14px;padding:12px 14px;text-align:left;box-shadow:var(--tile-shadow);transition:transform .12s,box-shadow .12s}
+  .chip:hover{transform:translateY(-1px);box-shadow:var(--pill-shadow)}
+  .chip b{display:block;font-weight:600}
+  .chip span{font-size:12.5px;color:var(--muted)}
+
+  /* plates visual */
+  .plates{background:var(--card);border:0;border-radius:var(--radius);box-shadow:var(--pill-shadow);padding:24px 16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:20px;min-height:120px;align-content:center}
+  .plates svg{width:44px;height:44px;animation:in .3s var(--ease) both}
+
+  /* options */
+  .opts{display:grid;gap:10px}
+  .opts.two{grid-template-columns:1fr 1fr}
+  .opt{background:var(--card);border:2px solid var(--bsoft);border-radius:16px;padding:14px 16px;text-align:left;font-weight:600;font-size:15px;display:flex;align-items:center;gap:12px;transition:border-color .15s,background .15s,color .15s}
+  .opt .k{width:24px;height:24px;border-radius:8px;border:1.5px solid var(--bsoft);font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;flex:none;font-weight:600;transition:inherit}
+  .opt:hover{border-color:#d6d3d1}
+  .opt.sel{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+  .opt.sel .k{background:color-mix(in srgb,var(--bg) 20%,transparent);border-color:transparent;color:var(--bg)}
+  .opt.sel .muted{color:color-mix(in srgb,var(--bg) 75%,transparent)}
+  .opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+  .opt.ok .k{border-color:var(--ok);color:var(--ok);background:transparent}
+  .opt.err{border-color:var(--err);background:var(--err-soft);color:var(--err)}
+  .opt.err .k{border-color:var(--err);color:var(--err);background:transparent}
+  .opt:disabled{cursor:default}
+
+  /* typed answer */
+  .field{width:100%;font:inherit;font-size:18px;font-weight:500;height:56px;padding:0 16px;border:2px solid var(--bsoft);border-radius:var(--r-field);background:var(--field);box-shadow:var(--field-inset);outline:none;transition:border-color .15s,background .15s;color:var(--fg)}
+  .field::placeholder{color:var(--muted2)}
+  .field:focus{border-color:var(--accent);background:var(--card)}
+  .field.ok{border-color:var(--ok)} .field.err{border-color:var(--err)}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:8px}
+
+  /* match pairs */
+  .match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .match .opt{justify-content:center;text-align:center}
+  .match .opt.gone{opacity:.3;pointer-events:none}
+
+  /* bottom action bar — floating pill */
+  .bar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:9;border:0;border-radius:26px;background:color-mix(in srgb,var(--card) 92%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--pill-shadow);transition:background .2s}
+  @supports not (background:color-mix(in srgb,#fff 92%,transparent)){.bar{background:rgba(255,255,255,.94)}}
+  @media(min-width:768px){.bar{left:50%;right:auto;transform:translateX(-50%);width:min(696px,calc(100vw - 24px))}}
+  .bar .wrap{display:flex;align-items:center;gap:14px;padding:12px 12px 12px 20px}
+  .bar.ok{background:var(--ok-soft)} .bar.err{background:var(--err-soft)}
+  .fb{flex:1;min-width:0}
+  .fb b{display:block;font-weight:600}
+  .bar.ok .fb b{color:var(--ok)} .bar.err .fb b{color:var(--err)}
+  .fb span{font-size:13.5px;color:var(--muted)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;background:var(--ink);color:var(--bg);font-weight:600;font-size:15px;height:48px;padding:0 22px;border-radius:var(--r-pill);min-width:130px;transition:opacity .15s,transform .06s;white-space:nowrap}
+  .btn:active{transform:scale(.98)}
+  .btn:disabled{opacity:.35;cursor:default;transform:none}
+  .btn.ghost{background:var(--card);color:var(--fg);border:2px solid var(--bsoft);min-width:0}
+  .bar.err .btn{background:var(--err);color:#fff} .bar.ok .btn{background:var(--ok);color:#fff}
+
+  /* summary */
+  .sum{text-align:center;padding-top:36px}
+  .sum .ring{width:120px;height:120px;margin:0 auto 20px;position:relative}
+  .sum .ring svg{transform:rotate(-90deg)}
+  .sum .ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:600;letter-spacing:-.02em}
+  .sum h2{font-size:22px;font-weight:600;letter-spacing:-.02em;margin-bottom:4px}
+  .sum p{color:var(--muted);margin-bottom:22px}
+  .rows{text-align:left;background:var(--card);border:0;border-radius:var(--radius);overflow:hidden;margin-bottom:20px;box-shadow:var(--pill-shadow)}
+  .rows div{display:flex;justify-content:space-between;padding:13px 18px;border-top:1px solid var(--line);font-size:14px}
+  .rows div:first-child{border-top:none}
+  .rows div span{color:var(--muted)}
+  .rows div b{font-weight:600}
+  .rows .miss b{color:var(--err)}
+
+  /* ---------- library exercises ---------- */
+  .panel{background:var(--card);border:0;border-radius:var(--radius);box-shadow:var(--pill-shadow);padding:20px;margin-bottom:16px}
+  .muted{font-size:13.5px;color:var(--muted)}
+  .play.lg{width:72px;height:72px}
+
+  /* word tiles — pills */
+  .slot{min-height:64px;border-bottom:2px solid var(--bsoft);display:flex;flex-wrap:wrap;gap:8px;padding:8px 0 12px;margin-bottom:18px}
+  .tiles{display:flex;flex-wrap:wrap;gap:8px}
+  .tile{background:var(--card);border:2px solid var(--bsoft);border-radius:var(--r-pill);height:44px;display:inline-flex;align-items:center;padding:0 16px;font-weight:600;font-size:14.5px;transition:transform .08s,border-color .15s,background .15s}
+  .tile:active{transform:translateY(1px)}
+  .tile.used{opacity:0;pointer-events:none}
+  .slot.ok .tile{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+  .slot.err .tile{border-color:var(--err);background:var(--err-soft);color:var(--err)}
+
+  /* ticket — keep the receipt look (content, not chrome) */
+  .ticket{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;background:#fffdf5;border:1px solid #e8e1c8;border-radius:8px;padding:16px 18px;max-width:320px;margin:0 auto 18px;box-shadow:var(--tile-shadow);position:relative}
+  .ticket::before,.ticket::after{content:"";position:absolute;left:0;right:0;height:6px;background:radial-gradient(circle,transparent 3px,#fffdf5 3.5px) 0 0/12px 6px}
+  .ticket::before{top:-6px} .ticket::after{bottom:-6px;transform:rotate(180deg)}
+  .ticket .hd{display:flex;justify-content:space-between;border-bottom:1px dashed #cfc7a8;padding-bottom:8px;margin-bottom:8px;font-weight:700}
+  .ticket .li{display:flex;justify-content:space-between;padding:2px 0}
+  .ticket .li i{font-style:normal;color:#8a7f5a;padding-left:12px;display:block;font-size:12px}
+  .ticket .ft{border-top:1px dashed #cfc7a8;margin-top:8px;padding-top:8px;font-size:12px;color:#8a7f5a}
+
+  /* dialogue */
+  .chat{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+  .msg{max-width:85%;padding:12px 15px;border-radius:18px;font-size:15px;line-height:1.4;animation:in .25s var(--ease) both}
+  .msg.them{background:var(--card);border:0;box-shadow:var(--tile-shadow);border-bottom-left-radius:6px;align-self:flex-start}
+  .msg.me{background:var(--ink);color:var(--bg);border-bottom-right-radius:6px;align-self:flex-end}
+  .msg .who{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin-bottom:3px}
+  .msg .tr{display:block;font-size:12px;opacity:.6;margin-top:4px}
+
+  /* hotspots / map */
+  .map{position:relative;background:var(--card);border:0;border-radius:var(--radius);overflow:hidden;margin-bottom:16px;box-shadow:var(--pill-shadow)}
+  .map svg{width:100%;display:block}
+  .hs{position:absolute;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:var(--r-pill);background:var(--card);border:2px solid var(--accent);color:var(--accent);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:var(--tile-shadow);transition:transform .12s}
+  .hs:hover{transform:translate(-50%,-50%) scale(1.08)}
+  .hs.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+  .hs.err{background:var(--err);border-color:var(--err);color:#fff;animation:shake .3s}
+  @keyframes shake{25%{margin-left:-4px}75%{margin-left:4px}}
+  .target{font-size:26px;font-weight:600;letter-spacing:-.02em;text-align:center;margin-bottom:6px}
+
+  /* sequence */
+  .seq{display:grid;gap:8px;margin-bottom:16px}
+  .seq .row{display:flex;align-items:center;gap:10px;background:var(--card);border:2px solid var(--bsoft);border-radius:14px;padding:12px 12px 12px 15px;transition:border-color .15s,background .15s}
+  .seq .row em{font-style:normal;font-size:10.5px;font-weight:700;color:var(--accent);min-width:56px;text-transform:uppercase;letter-spacing:.08em}
+  .seq .row span{flex:1;font-weight:500}
+  .seq .row .mv{display:flex;flex-direction:column;gap:3px}
+  .seq .row .mv button{width:32px;height:25px;border:0;border-radius:var(--r-pill);background:var(--soft);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:11px;transition:background .15s,color .15s}
+  .seq .row .mv button:hover:not(:disabled){background:var(--active);color:var(--fg)}
+  .seq .row .mv button:disabled{opacity:.3;cursor:default}
+  .seq .row.ok{border-color:var(--ok);background:var(--ok-soft)} .seq .row.err{border-color:var(--err);background:var(--err-soft)}
+
+  /* rapid */
+  .timer{height:5px;background:var(--active);border-radius:99px;overflow:hidden;margin-bottom:20px}
+  .timer i{display:block;height:100%;width:100%;border-radius:99px;background:var(--warn);transition:width .1s linear}
+  .big-word{font-size:32px;font-weight:600;letter-spacing:-.03em;text-align:center;padding:30px 0;animation:in .2s var(--ease)}
+  .score{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:8px;font-variant-numeric:tabular-nums}
+
+  /* speaking */
+  .mic{width:84px;height:84px;border-radius:var(--r-pill);background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;margin:10px auto 14px;position:relative;box-shadow:0 8px 24px -8px rgba(0,0,0,.35);transition:transform .1s}
+  .mic:active{transform:scale(.96)}
+  .mic.live::after{content:"";position:absolute;inset:-8px;border-radius:var(--r-pill);border:2px solid var(--accent);animation:pulse 1.2s infinite}
+  @keyframes pulse{from{transform:scale(1);opacity:.8}to{transform:scale(1.35);opacity:0}}
+  .heard{text-align:center;font-size:17px;min-height:28px;margin-bottom:6px}
+
+  /* conjugation */
+  .conj{width:100%;border-collapse:collapse;background:var(--card);border:0;border-radius:var(--r-tile);overflow:hidden;margin-bottom:16px;box-shadow:var(--pill-shadow)}
+  .conj td{padding:11px 16px;border-top:1px solid var(--line);font-size:15px}
+  .conj tr:first-child td{border-top:none}
+  .conj td:first-child{color:var(--muted);width:40%}
+  .conj input{width:100%;font:inherit;font-size:15px;font-weight:500;padding:9px 12px;border:2px solid var(--bsoft);border-radius:10px;background:var(--field);outline:none;transition:border-color .15s,background .15s;color:var(--fg)}
+  .conj input:focus{border-color:var(--accent);background:var(--card)}
+  .conj input.ok{border-color:var(--ok);background:var(--ok-soft)} .conj input.err{border-color:var(--err);background:var(--err-soft)}
+  .conj .given{font-weight:600}
+
+  /* ---------- lesson-loop components ---------- */
+  .lvl-h{margin:30px 4px 2px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  #units>.lvl-h:first-child{margin-top:18px}
+  .lesson.ghost{pointer-events:none}
+  .lesson.ghost .d{display:none}
+  .st.dash{border-style:dashed}
+  .unit.soon .unit-h{border-bottom:1px solid var(--line)}
+  .unit.soon .unit-h .n{background:var(--soft);color:var(--muted)}
+  .chunks{display:grid;gap:10px}
+  .chunkrow{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:16px;box-shadow:var(--tile-shadow);padding:12px 12px 12px 16px}
+  .chunkrow .ctxt{flex:1;min-width:0;text-align:left;display:flex;flex-direction:column;gap:2px}
+  .ctxt b{font-size:16.5px;font-weight:600;letter-spacing:-.01em}
+  .ctxt span{font-size:13px;color:var(--muted)}
+  .spd{display:inline-flex;gap:2px;padding:3px;border-radius:var(--r-pill);background:var(--input);flex:none}
+  .spd button{height:28px;padding:0 11px;border-radius:var(--r-pill);font-size:12px;font-weight:600;color:var(--muted);transition:background .15s,color .15s}
+  .spd button:hover{color:var(--fg)}
+  .spd button:active{background:var(--card);color:var(--fg);box-shadow:0 1px 3px rgba(28,25,23,.12)}
+  .hearbar{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 22px}
+  .scene-ctl{display:flex;gap:8px;margin-top:16px}
+  .sbtn{height:36px;padding:0 15px;border-radius:var(--r-pill);border:2px solid var(--bsoft);background:var(--card);font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:7px;transition:background .15s,color .15s,border-color .15s}
+  .sbtn:hover{background:var(--hover)}
+  .sbtn.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+  .chat .tr.sub{display:none}
+  .chat.subs .tr.sub{display:block}
+  .msg.cur{box-shadow:0 0 0 2px var(--accent),var(--tile-shadow)}
+  .msg.them.slow{border:1.5px dashed var(--bsoft);box-shadow:none;background:var(--field)}
+  .opts.one{grid-template-columns:1fr}
+  .sayline{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:600;letter-spacing:-.01em;margin:2px 0 4px}
+  .divider{height:1px;background:var(--line);margin:16px 0 14px}
+  .blank{color:var(--accent);letter-spacing:.05em}
+  .imgopts .opt{justify-content:center;padding:20px 12px;color:var(--ink)}
+  .tableset{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;padding:24px 16px}
+  .tableset .obj{width:52px;height:52px;display:grid;place-items:center;border-radius:12px;background:var(--field);color:var(--fg)}
+  .tableset .obj.miss{background:transparent;border:2px dashed var(--bsoft)}
+  .mstat{display:flex;align-items:center;justify-content:space-between;margin:2px 0 8px}
+  .lives{display:inline-flex;gap:5px}
+  .lives i{width:12px;height:12px;border-radius:99px;border:1.5px solid var(--bsoft);background:transparent;transition:background .2s}
+  .lives i.on{background:var(--err);border-color:var(--err)}
+  .mxpc{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent)}
+  .mq{font-size:19px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+  .bar.ok{animation:s-pop .18s var(--ease)}
+  @keyframes s-pop{from{transform:scale(.985);opacity:.7}}
+  @media(min-width:768px){.bar.ok{animation:none}}
+
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <button class="brand" onclick="goLanding()"><i></i><span id="brandName">La Línea</span></button>
+  <nav class="nav" id="nav">
+    <button id="navCourse" onclick="goHome()"></button>
+    <div class="seg" id="langSeg">
+      <button class="on" data-l="en">English</button>
+      <button data-l="es">Español</button>
+    </div>
+  </nav>
+</div></header>
+
+<!-- ============ LANDING ============ -->
+<main id="landing">
+  <section class="land-hero"><div class="wrap">
+    <div class="eyebrow" id="l-eyebrow"></div>
+    <h1 class="big" id="l-title"></h1>
+    <p class="lead" id="l-lead"></p>
+    <div class="cta">
+      <button class="btn" onclick="goHome()" id="l-cta"></button>
+      <span id="l-free"></span>
+    </div>
+  </div></section>
+
+  <section class="wrap band">
+    <div class="eyebrow" id="l-howk"></div>
+    <div class="how" id="l-how"></div>
+  </section>
+
+  <section class="wrap band">
+    <div class="eyebrow" id="l-pathk"></div>
+    <h2 class="h2" id="l-patht"></h2>
+    <ol class="path" id="l-path"></ol>
+  </section>
+
+  <section class="wrap band two-way">
+    <div><div class="eyebrow" id="l-twok"></div><h2 class="h2" id="l-twot"></h2><p class="lead" id="l-twol"></p></div>
+    <div class="pair"><div><b>EN → ES</b><span id="l-pa"></span></div><div><b>ES → EN</b><span id="l-pb"></span></div></div>
+  </section>
+
+  <footer class="wrap foot"><span id="brandFoot"></span><span id="l-foot"></span></footer>
+</main>
+
+<!-- ============ COURSE HOME ============ -->
+<main id="home" class="wrap hide">
+  <section class="hero">
+    <div class="eyebrow" id="h-eyebrow"></div>
+    <h1 id="h-title"></h1>
+    <p class="lead" id="h-lead"></p>
+    <div class="meta">
+      <div><b>3</b><span id="h-m1"></span></div>
+      <div><b>135</b><span id="h-m2"></span></div>
+      <div><b>5–10 min</b><span id="h-m3"></span></div>
+      <div id="h-xpwrap" class="hide"><b id="h-xp" style="color:var(--accent)">0</b><span>XP</span></div>
+    </div>
+  </section>
+  <div id="units"></div>
+</main>
+
+<!-- ============ LESSON ============ -->
+<div id="lesson" class="hide">
+  <div class="wrap lesson-top">
+    <button class="x" onclick="goHome()" aria-label="Exit"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="prog"><i id="progFill"></i></div>
+    <div class="step" id="stepLabel"></div>
+  </div>
+  <div class="wrap"><div id="screen" class="screen"></div></div>
+  <div class="bar" id="bar"><div class="wrap">
+    <div class="fb" id="fb"></div>
+    <button class="btn" id="primary"></button>
+  </div></div>
+</div>
+
+<script>
+/* =========================================================
+   CONTENT  — direction: "en" = learner studies English (UI in Spanish)
+                         "es" = learner studies Spanish (UI in English)
+   ========================================================= */
+const NUM = {
+  en:["one","two","three","four","five","six","seven","eight","nine","ten"],
+  es:["uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez"]
+};
+const EXAMPLES = {
+  en:[["I need one plate.","Necesito un plato."],["Two orders are ready.","Dos pedidos están listos."],["Three tickets on the board.","Tres comandas en la pantalla."],["Four covers at table nine.","Cuatro personas en la mesa nueve."],["Five minutes on the salmon.","Cinco minutos para el salmón."],["Six eggs, please.","Seis huevos, por favor."],["Seven dishes in the pass.","Siete platos en el pase."],["Table eight is waiting.","La mesa ocho está esperando."],["Nine limes for the bar.","Nueve limones para la barra."],["Ten minutes to open.","Diez minutos para abrir."]],
+  es:[["Necesito un plato.","I need one plate."],["Dos pedidos están listos.","Two orders are ready."],["Tres comandas en la pantalla.","Three tickets on the board."],["Cuatro personas en la mesa nueve.","Four covers at table nine."],["Cinco minutos para el salmón.","Five minutes on the salmon."],["Seis huevos, por favor.","Six eggs, please."],["Siete platos en el pase.","Seven dishes in the pass."],["La mesa ocho está esperando.","Table eight is waiting."],["Nueve limones para la barra.","Nine limes for the bar."],["Diez minutos para abrir.","Ten minutes to open."]]
+};
+/* UI strings keyed by the learner's NATIVE language (the one the interface speaks) */
+const UI = {
+  es:{ eyebrow:"Curso de inglés · Nivel A1", title:"Inglés para la cocina", lead:"Un curso estructurado de inglés para quienes trabajan en restaurantes. Fundamentos reales del idioma, con ejemplos tomados del trabajo diario.",
+       m1:"niveles", m2:"lecciones", m3:"por lección",
+       units:[["Nivel 1 · Supervivencia","Frases de rescate, números, tu restaurante, instrucciones"],["Nivel 2 · El equipo","Lenguaje de cocina, compañeros, horarios"],["Nivel 3 · Clientes","Recibir, correr comida, servir mesas"],["Rutas","Elige tu camino: servidor o cocina"]],
+       lessons:[["Saludos y presentaciones","done"],["Números del 1 al 10","cur"],["Días y horarios","todo"],["Frases de supervivencia","todo"]],
+       start:"Continuar", review:"Repasar", done:"Completada",
+       learn:"Aprender", practice:"Practicar", check:"Comprobar", next:"Continuar", finish:"Terminar", skip:"Omitir",
+       kLearn:"Vocabulario", kPlates:"Comprensión", kListen:"Escuchar", kType:"Escribir", kMatch:"Relacionar", kSentence:"En contexto",
+       qLearn:"Números del 1 al 10", qPlates:"¿Cuántos platos hay?", qListen:"¿Qué número escuchaste?", qType:"Escribe el número en inglés", qMatch:"Relaciona los pares", qSentence:"Completa la frase",
+       typeHint:"Escribe la palabra, no la cifra.",
+       correct:"Correcto", incorrect:"Respuesta correcta:",
+       sumTitle:"Lección completada", sumSub:"Números del 1 al 10", acc:"Precisión", items:"Ejercicios", missed:"Para repasar", back:"Volver al curso", none:"Nada pendiente",
+       stepOf:(a,b)=>`${a} / ${b}`,
+       nav:"Mi curso", exercises:"ejercicios",
+      check:"Comprobar",next:"Continuar",libDone:"Listo",correct:"Correcto",incorrect:"Respuesta correcta:",tryAgain:"Intentar de nuevo",
+      tap:"Toca las palabras en orden",tapHint:"Toca una palabra colocada para devolverla.",
+      ticket:"Lee la comanda",dlg:"Elige tu respuesta",map:"Toca la estación",seqq:"Ordena los pasos",rapid:"Toca la traducción antes de que se acabe el tiempo",dict:"Escucha y escribe",speak:"Di la frase en voz alta",conjq:"Completa la tabla",
+      heardNone:"No se detectó voz. Intenta otra vez.",noSR:"Tu navegador no admite reconocimiento de voz. Escribe la frase:",tapMic:"Toca el micrófono y habla",
+      rapidDone:(s,t)=>`${s} de ${t} correctas`,time:"Tiempo",scoreL:"Puntos",
+      kVocab:"Vocabulario",qPick:"Elige la traducción",
+      kScene:"Escena",kChunks:"Frases clave",kListenP:"Escucha",kUnder:"Comprende",kSay:"Habla",kRole:"Conversación",kReview:"Repaso",
+      slow:"Lento",fast:"Natural",replay:"Repetir",subs:"+ Traducción",
+      sceneHint:"Escucha la escena. Repítela las veces que quieras.",
+      chunkHint:"Toca cada frase para escucharla. Lento y Natural cambian la velocidad.",
+      sayHint:"Escucha a tu gerente y responde en voz alta.",yourReply:"Tu respuesta",managerSays:"Tu gerente dice:",
+      roleHint:"Elige tu respuesta. Pedir que repitan también está bien.",coach:"Lo dice otra vez, más despacio:",
+      soon:"Próximamente",moreLessons:n=>`+ ${n} lecciones en camino`,lockedUnit:"Esta unidad se abre pronto",
+      whoM:"GERENTE",whoC:"COMPAÑERO",whoY:"TÚ",go:"Empezar",
+      kFill:"Completa la frase",kTF:"¿Cierto o falso?",kTap:"Toca el objeto",kMissing:"¿Qué falta?",kMission:"Misión",
+      tTrue:"Cierto",tFalse:"Falso",
+      skillUnlocked:"Habilidad desbloqueada",xpEarned:"XP ganados",
+      shiftDone:"Turno completado",outOfLives:"Se acabaron las vidas",retry:"Intentar otra vez",missionHint:"Tres vidas. Escucha y responde rápido.",
+       lEyebrow:"Un curso para compañeros de trabajo · Gratis", lTitle:"Aprende inglés con el vocabulario de tu cocina.", lLead:"Hecho para equipos de restaurante: el inglés que de verdad se habla en tu turno, con ejemplos reales del trabajo que ya haces. Empieza por sobrevivir tu primer turno y avanza hasta conversaciones completas.",
+       lCta:"Empezar el curso", lFree:"Sin cuenta. Sin costo.",
+       lHowk:"Cómo funciona", lHow:[["Aprende","Vocabulario con audio y una frase de ejemplo tomada de la cocina."],["Practica","Ejercicios de comprensión, escucha, escritura y relación de pares."],["Avanza","Seis unidades, de los fundamentos a conversaciones reales del servicio."]],
+       lPathk:"Plan de estudios", lPatht:"Tres niveles, de sobrevivir tu primer turno a atender mesas",
+       lTwok:"En los dos sentidos", lTwot:"Tus compañeros aprenden inglés. Tú aprendes español.", lTwol:"El mismo curso en ambas direcciones, para que puedan practicar juntos en el trabajo.",
+       lPa:"Para quienes hablan inglés y quieren aprender español.", lPb:"Para quienes hablan español y quieren aprender inglés.",
+       lFoot:"Hecho en una cocina, para cocinas." },
+  en:{ eyebrow:"Spanish course · Level A1", title:"Spanish for the kitchen", lead:"A structured Spanish course for people who work in restaurants. Real language fundamentals, with examples drawn from the daily work.",
+       m1:"levels", m2:"lessons", m3:"per lesson",
+       units:[["Level 1 · Survival","Rescue phrases, numbers, your restaurant, instructions"],["Level 2 · The team","Kitchen language, coworkers, schedules"],["Level 3 · Guests","Greeting, running food, serving tables"],["Paths","Pick your track: server or kitchen"]],
+       lessons:[["Greetings & introductions","done"],["Numbers 1–10","cur"],["Days & schedules","todo"],["Survival phrases","todo"]],
+       start:"Continue", review:"Review", done:"Completed",
+       learn:"Learn", practice:"Practice", check:"Check", next:"Continue", finish:"Finish", skip:"Skip",
+       kLearn:"Vocabulary", kPlates:"Comprehension", kListen:"Listening", kType:"Writing", kMatch:"Matching", kSentence:"In context",
+       qLearn:"Numbers 1–10", qPlates:"How many plates are there?", qListen:"Which number did you hear?", qType:"Type the number in Spanish", qMatch:"Match the pairs", qSentence:"Complete the sentence",
+       typeHint:"Type the word, not the digit.",
+       correct:"Correct", incorrect:"Correct answer:",
+       sumTitle:"Lesson complete", sumSub:"Numbers 1–10", acc:"Accuracy", items:"Exercises", missed:"To review", back:"Back to course", none:"Nothing to review",
+       stepOf:(a,b)=>`${a} / ${b}`,
+       nav:"My course", exercises:"exercises",
+      check:"Check",next:"Continue",libDone:"Done",correct:"Correct",incorrect:"Correct answer:",tryAgain:"Try again",
+      tap:"Tap the words in order",tapHint:"Tap a placed word to send it back.",
+      ticket:"Read the ticket",dlg:"Choose your reply",map:"Tap the station",seqq:"Put the steps in order",rapid:"Tap the translation before time runs out",dict:"Listen and type",speak:"Say the phrase out loud",conjq:"Complete the table",
+      heardNone:"No speech detected. Try again.",noSR:"Your browser doesn't support speech recognition. Type the phrase instead:",tapMic:"Tap the mic and speak",
+      rapidDone:(s,t)=>`${s} of ${t} correct`,time:"Time",scoreL:"Score",
+      kVocab:"Vocabulary",qPick:"Choose the translation",
+      kScene:"Scene",kChunks:"Key phrases",kListenP:"Listen",kUnder:"Understand",kSay:"Speak",kRole:"Conversation",kReview:"Review",
+      slow:"Slow",fast:"Natural",replay:"Replay",subs:"+ Translation",
+      sceneHint:"Listen to the scene. Replay it as many times as you like.",
+      chunkHint:"Tap each phrase to hear it. Slow and Natural change the speed.",
+      sayHint:"Listen to your manager, then answer out loud.",yourReply:"Your reply",managerSays:"Your manager says:",
+      roleHint:"Pick your reply. Asking them to repeat is always okay.",coach:"They say it again, slower:",
+      soon:"Coming soon",moreLessons:n=>`+ ${n} lessons on the way`,lockedUnit:"This unit opens soon",
+      whoM:"MANAGER",whoC:"COWORKER",whoY:"YOU",go:"Start",
+      kFill:"Complete the sentence",kTF:"True or false?",kTap:"Tap the object",kMissing:"What's missing?",kMission:"Mission",
+      tTrue:"True",tFalse:"False",
+      skillUnlocked:"Skill unlocked",xpEarned:"XP earned",
+      shiftDone:"Shift complete",outOfLives:"Out of lives",retry:"Try again",missionHint:"Three lives. Listen and answer fast.",
+       lEyebrow:"A course for coworkers · Free", lTitle:"Learn Spanish with the vocabulary of your own kitchen.", lLead:"Made for restaurant teams: the Spanish your kitchen actually speaks, with real examples from the work you already do. Start by surviving your first shift and work up to full conversations.",
+       lCta:"Start the course", lFree:"No account. No cost.",
+       lHowk:"How it works", lHow:[["Learn","Vocabulary with audio and one example sentence from the kitchen."],["Practice","Comprehension, listening, writing and matching exercises."],["Progress","Six units, from the fundamentals to real shift conversations."]],
+       lPathk:"Curriculum", lPatht:"Three levels, from surviving your first shift to waiting tables",
+       lTwok:"Both directions", lTwot:"Your coworkers learn English. You learn Spanish.", lTwol:"The same course in both directions, so you can practice together at work.",
+       lPa:"For English speakers learning Spanish.", lPb:"For Spanish speakers learning English.",
+       lFoot:"Made in a kitchen, for kitchens." }
+};
+const VOICE = {en:"en-US", es:"es-MX"};
+
+const EX=[
+ {id:"order",unit:3,skills:["gram","write"],
+  meta:{es:["Construir la frase","Toca las palabras en el orden correcto para formar una instrucción."],en:["Build the sentence","Tap the words in the right order to form an instruction."]},
+  data:{en:{sentence:"Can you bring me the pan?",trans:"¿Me puedes traer la sartén?",extra:["plate","now"]},
+        es:{sentence:"¿Me puedes traer la sartén?",trans:"Can you bring me the pan?",extra:["plato","ahora"]}}},
+ {id:"ticket",unit:1,skills:["read","vocab"],
+  meta:{es:["Leer la comanda","Una comanda real aparece. Responde preguntas sobre ella."],en:["Read the ticket","A real kitchen ticket comes in. Answer questions about it."]},
+  data:{en:{q:"How many salmon on this ticket?",opts:["One","Two","Three","Four"],ans:1,
+            ticket:{tbl:"TABLE 9",cov:"4 COVERS",items:[["2","Salmon","no butter"],["1","Ribeye","med rare"],["1","Pasta","gf"]],ft:"FIRE 7:42 PM · SERVER MARIA"}},
+        es:{q:"¿Cuántos salmones hay en esta comanda?",opts:["Uno","Dos","Tres","Cuatro"],ans:1,
+            ticket:{tbl:"MESA 9",cov:"4 PERSONAS",items:[["2","Salmón","sin mantequilla"],["1","Ribeye","término medio"],["1","Pasta","sin gluten"]],ft:"MARCHAR 7:42 PM · MESERA MARIA"}}}},
+ {id:"dialogue",unit:5,skills:["conv","read"],
+  meta:{es:["Diálogo en el servicio","El chef te habla. Elige la mejor respuesta y la conversación continúa."],en:["Shift dialogue","The chef talks to you. Pick the best reply and the conversation continues."]},
+  data:{en:{who:"CHEF",me:"YOU",steps:[
+          {them:["How long on table six?","¿Cuánto falta para la mesa seis?"],opts:[["Two minutes, chef.","Dos minutos, chef."],["Table six is nice.","La mesa seis es bonita."],["I don't have a table.","No tengo mesa."]],ans:0},
+          {them:["Good. I need the salmon walking.","Bien. Necesito que el salmón salga ya."],opts:[["The salmon is swimming.","El salmón está nadando."],["Yes chef, salmon walking.","Sí chef, sale el salmón."],["Where is the salmon?","¿Dónde está el salmón?"]],ans:1},
+          {them:["Behind you, hot pan.","Detrás de ti, sartén caliente."],opts:[["Thank you, I'm fine.","Gracias, estoy bien."],["Heard.","Escuchado."],["It is not hot.","No está caliente."]],ans:1}]},
+        es:{who:"CHEF",me:"TÚ",steps:[
+          {them:["¿Cuánto falta para la mesa seis?","How long on table six?"],opts:[["Dos minutos, chef.","Two minutes, chef."],["La mesa seis es bonita.","Table six is nice."],["No tengo mesa.","I don't have a table."]],ans:0},
+          {them:["Bien. Necesito que el salmón salga ya.","Good. I need the salmon walking."],opts:[["El salmón está nadando.","The salmon is swimming."],["Sí chef, sale el salmón.","Yes chef, salmon walking."],["¿Dónde está el salmón?","Where is the salmon?"]],ans:1},
+          {them:["Detrás de ti, sartén caliente.","Behind you, hot pan."],opts:[["Gracias, estoy bien.","Thank you, I'm fine."],["Escuchado.","Heard."],["No está caliente.","It is not hot."]],ans:1}]}}},
+ {id:"map",unit:1,skills:["vocab","listen"],
+  meta:{es:["Mapa de la cocina","Escucha el nombre de una estación y tócala en el plano."],en:["Kitchen map","Hear the name of a station and tap it on the floor plan."]},
+  data:{en:{stations:[["walk-in","cámara fría",14,30],["prep","preparación",40,30],["the line","la línea",66,30],["the pass","el pase",88,30],["dish pit","lavado",14,74],["dry storage","almacén",40,74],["flat top","plancha",66,74],["expo","expo",88,74]]},
+        es:{stations:[["cámara fría","walk-in",14,30],["preparación","prep",40,30],["la línea","the line",66,30],["el pase","the pass",88,30],["lavado","dish pit",14,74],["almacén","dry storage",40,74],["plancha","flat top",66,74],["expo","expo",88,74]]}}},
+ {id:"seq",unit:4,skills:["gram","read"],
+  meta:{es:["Ordenar los pasos","Usa primero, luego, después y por último para ordenar una receta."],en:["Order the steps","Use first, then, next and finally to put a recipe in order."]},
+  data:{en:{labels:["First","Then","Next","Finally"],steps:["Heat the pan.","Add the oil.","Sear the fish.","Plate it and call it."]},
+        es:{labels:["Primero","Luego","Después","Por último"],steps:["Calienta la sartén.","Agrega el aceite.","Sella el pescado.","Emplata y canta."]}}},
+ {id:"rapid",unit:1,skills:["vocab","read"],
+  meta:{es:["Frases de supervivencia · Ráfaga","Avisos que se gritan en la cocina. Relaciona rápido, con tiempo."],en:["Survival phrases · Rapid fire","Callouts you shout on the line. Match fast, against the clock."]},
+  data:{en:{pairs:[["Behind!","¡Atrás!"],["Hot!","¡Caliente!"],["Corner!","¡Esquina!"],["Heard!","¡Escuchado!"],["Sharp!","¡Cuchillo!"],["Order up!","¡Sale pedido!"],["86 the soup","Se acabó la sopa"],["All day","En total"]]},
+        es:{pairs:[["¡Atrás!","Behind!"],["¡Caliente!","Hot!"],["¡Esquina!","Corner!"],["¡Escuchado!","Heard!"],["¡Cuchillo!","Sharp!"],["¡Sale pedido!","Order up!"],["Se acabó la sopa","86 the soup"],["En total","All day"]]}}},
+ {id:"dict",unit:2,skills:["listen","write"],
+  meta:{es:["Dictado","Escucha una frase completa y escríbela."],en:["Dictation","Hear a full sentence and type it."]},
+  data:{en:{text:"We need more plates.",trans:"Necesitamos más platos."},es:{text:"Necesitamos más platos.",trans:"We need more plates."}}},
+ {id:"speak",unit:3,skills:["speakS"],
+  meta:{es:["Práctica de pronunciación","Di la frase en voz alta. El micrófono comprueba lo que dijiste."],en:["Pronunciation practice","Say the phrase out loud. The mic checks what you said."]},
+  data:{en:{text:"Where is the sauce?",trans:"¿Dónde está la salsa?"},es:{text:"¿Dónde está la salsa?",trans:"Where is the sauce?"}}},
+ {id:"conj",unit:2,skills:["gram","write"],
+  meta:{es:["Conjugar el verbo","Completa la tabla del verbo con los pronombres."],en:["Conjugate the verb","Fill in the verb table for each pronoun."]},
+  data:{en:{verb:"to need",rows:[["I","need",true],["You","need",false],["He / She","needs",false],["We","need",false],["They","need",false]]},
+        es:{verb:"necesitar",rows:[["Yo","necesito",true],["Tú","necesitas",false],["Él / Ella","necesita",false],["Nosotros","necesitamos",false],["Ellos","necesitan",false]]}}}
+];
+
+
+/* =========================================================
+   CURRICULUM — every lesson is a sequence of steps
+   ========================================================= */
+const VOCAB={
+  greet:{en:[["Hello","Hola","Hello, chef.","Hola, chef."],["Good morning","Buenos días","Good morning, everyone.","Buenos días a todos."],["How are you?","¿Cómo estás?","How are you today?","¿Cómo estás hoy?"],["My name is…","Me llamo…","My name is Luis.","Me llamo Luis."],["Nice to meet you","Mucho gusto","Nice to meet you, Maria.","Mucho gusto, María."],["Thank you","Gracias","Thank you for the help.","Gracias por la ayuda."],["See you tomorrow","Hasta mañana","See you tomorrow at four.","Hasta mañana a las cuatro."],["Excuse me","Perdón","Excuse me, coming through.","Perdón, voy pasando."]],
+         es:[["Hola","Hello","Hola, chef.","Hello, chef."],["Buenos días","Good morning","Buenos días a todos.","Good morning, everyone."],["¿Cómo estás?","How are you?","¿Cómo estás hoy?","How are you today?"],["Me llamo…","My name is…","Me llamo Luis.","My name is Luis."],["Mucho gusto","Nice to meet you","Mucho gusto, María.","Nice to meet you, Maria."],["Gracias","Thank you","Gracias por la ayuda.","Thank you for the help."],["Hasta mañana","See you tomorrow","Hasta mañana a las cuatro.","See you tomorrow at four."],["Perdón","Excuse me","Perdón, voy pasando.","Excuse me, coming through."]]},
+  days:{en:[["Monday","lunes","I work Monday.","Trabajo el lunes."],["Tuesday","martes","Tuesday is prep day.","El martes es día de prep."],["Wednesday","miércoles","Delivery comes Wednesday.","La entrega llega el miércoles."],["Thursday","jueves","Thursday is slow.","El jueves es tranquilo."],["Friday","viernes","Friday is busy.","El viernes es pesado."],["Saturday","sábado","Saturday, double shift.","El sábado, turno doble."],["Sunday","domingo","Sunday is brunch.","El domingo es brunch."],["Today","hoy","Today I open.","Hoy abro yo."],["Tomorrow","mañana","Tomorrow I'm off.","Mañana descanso."]],
+        es:[["lunes","Monday","Trabajo el lunes.","I work Monday."],["martes","Tuesday","El martes es día de prep.","Tuesday is prep day."],["miércoles","Wednesday","La entrega llega el miércoles.","Delivery comes Wednesday."],["jueves","Thursday","El jueves es tranquilo.","Thursday is slow."],["viernes","Friday","El viernes es pesado.","Friday is busy."],["sábado","Saturday","El sábado, turno doble.","Saturday, double shift."],["domingo","Sunday","El domingo es brunch.","Sunday is brunch."],["hoy","Today","Hoy abro yo.","Today I open."],["mañana","Tomorrow","Mañana descanso.","Tomorrow I'm off."]]}
+};
+/* =========================================================
+   CURRICULUM v2 — situations, not grammar chapters.
+   SIT[id] = lesson-loop content per direction (scene → chunks →
+   listen → understand → speak → role play). Rescue options ("r")
+   are always valid: the speaker repeats slower, or jumps to the
+   node named in o[3]. LEVELS/LESSON_STEPS = course structure.
+   ========================================================= */
+const SIT={
+"1":{
+ en:{scene:[["M","Carlos, can you take this to table five?","Carlos, ¿puedes llevar esto a la mesa cinco?"],["Y","Okay, I got it.","Okay, entendido."],["M","Thank you!","¡Gracias!"]],
+  chunks:[["Yes","Sí"],["No","No"],["Okay","Está bien · okay"],["I understand","Entiendo"],["I got it","Entendido · yo me encargo"],["No problem","Sin problema"]],
+  hp:[{a:"I got it.",q:"¿Qué significa?",opts:["Entendido","No entiendo","Más despacio"],ans:0},
+      {a:"Take this to table five, okay?",q:"¿Qué debes hacer?",opts:["Llevar esto a la mesa cinco","Limpiar la mesa cinco","Traer cinco platos"],ans:0}],
+  say:{p:["Can you run this to table three?","¿Puedes llevar esto a la mesa tres?"],r:["Okay, I got it.","Okay, entendido."],ok:["okay i got it","i got it","ok i got it","got it"]},
+  rp:[{m:["Can you take these plates to the kitchen?","¿Puedes llevar estos platos a la cocina?"],o:[["Yes, I got it.","Sí, entendido.","ok"],["Can you say that again?","¿Puedes repetirlo?","r"],["No problem.","Sin problema.","ok"]]},
+      {m:["Thanks! And grab me a towel, please.","¡Gracias! Y tráeme una toalla, por favor."],o:[["Okay.","Está bien.","ok"],["A towel? This one?","¿Una toalla? ¿Ésta?","ok"],["Can you show me?","¿Me enseñas?","r"]]}]},
+ es:{scene:[["M","Carlos, ¿puedes llevar esto a la mesa cinco?","Carlos, can you take this to table five?"],["Y","Está bien, entendido.","Okay, got it."],["M","¡Gracias!","Thank you!"]],
+  chunks:[["Sí","Yes"],["No","No"],["Está bien","Okay"],["Entiendo","I understand"],["Entendido","Got it · I'm on it"],["Sin problema","No problem"]],
+  hp:[{a:"Entendido.",q:"What does it mean?",opts:["Got it","I don't understand","Slower, please"],ans:0},
+      {a:"Lleva esto a la mesa cinco, ¿okay?",q:"What should you do?",opts:["Take this to table five","Clean table five","Bring five plates"],ans:0}],
+  say:{p:["¿Puedes llevar esto a la mesa tres?","Can you run this to table three?"],r:["Está bien, entendido.","Okay, got it."],ok:["esta bien entendido","entendido","esta bien","si entendido"]},
+  rp:[{m:["¿Puedes llevar estos platos a la cocina?","Can you take these plates to the kitchen?"],o:[["Sí, entendido.","Yes, got it.","ok"],["¿Puedes repetirlo?","Can you say that again?","r"],["Sin problema.","No problem.","ok"]]},
+      {m:["¡Gracias! Y tráeme una toalla, por favor.","Thanks! And grab me a towel, please."],o:[["Está bien.","Okay.","ok"],["¿Una toalla? ¿Ésta?","A towel? This one?","ok"],["¿Me enseñas?","Can you show me?","r"]]}]}},
+"2":{
+ en:{scene:[["M","We need to flip six before the party gets here.","Hay que preparar la seis antes de que llegue el grupo."],["Y","Sorry, I don't understand.","Perdón, no entiendo."],["M","No problem — clean table six, please.","No hay problema: limpia la mesa seis, por favor."],["Y","Okay, I got it.","Okay, entendido."]],
+  chunks:[["I don't understand","No entiendo"],["Sorry?","¿Perdón? · ¿Cómo?"],["One more time, please","Una vez más, por favor"],["I'm still learning English","Todavía estoy aprendiendo inglés"],["No problem","No hay problema"]],
+  hp:[{a:"I don't understand.",q:"¿Qué significa?",opts:["No entiendo","Ya terminé","Necesito ayuda"],ans:0},
+      {a:"No problem — clean table six, please.",q:"¿Qué debes hacer?",opts:["Limpiar la mesa seis","Preparar seis mesas","Llevar seis platos"],ans:0}],
+  say:{p:["Can you flip table six real quick?","¿Puedes preparar la mesa seis rapidito?"],r:["Sorry, I don't understand.","Perdón, no entiendo."],ok:["sorry i dont understand","i dont understand"]},
+  rp:[{m:["Hey, can you break down the boxes in the back?","Oye, ¿puedes desarmar las cajas de atrás?"],o:[["Sorry, I don't understand.","Perdón, no entiendo.","r",1],["I got it.","Entendido.","ok",2]]},
+      {m:["The boxes — in the back. Fold them, please.","Las cajas, atrás. Dóblalas, por favor."],o:[["Oh! Okay, I got it.","¡Ah! Okay, entendido.","ok"],["Can you show me?","¿Me enseñas?","r"]]},
+      {m:["Perfect, thank you!","¡Perfecto, gracias!"],o:[["No problem.","Sin problema.","ok"],["Okay.","Está bien.","ok"]]}]},
+ es:{scene:[["M","Hay que montar la seis antes de que llegue el grupo.","We need to set up six before the party gets here."],["Y","Perdón, no entiendo.","Sorry, I don't understand."],["M","No hay problema: limpia la mesa seis, por favor.","No problem — clean table six, please."],["Y","Está bien, entendido.","Okay, got it."]],
+  chunks:[["No entiendo","I don't understand"],["¿Perdón?","Sorry? · Pardon?"],["Una vez más, por favor","One more time, please"],["Todavía estoy aprendiendo español","I'm still learning Spanish"],["No hay problema","No problem"]],
+  hp:[{a:"No entiendo.",q:"What does it mean?",opts:["I don't understand","I'm finished","I need help"],ans:0},
+      {a:"No hay problema: limpia la mesa seis, por favor.",q:"What should you do?",opts:["Clean table six","Set up six tables","Carry six plates"],ans:0}],
+  say:{p:["¿Puedes montar la mesa seis rapidito?","Can you set up table six real quick?"],r:["Perdón, no entiendo.","Sorry, I don't understand."],ok:["perdon no entiendo","no entiendo"]},
+  rp:[{m:["Oye, ¿puedes desarmar las cajas de atrás?","Hey, can you break down the boxes in the back?"],o:[["Perdón, no entiendo.","Sorry, I don't understand.","r",1],["Entendido.","Got it.","ok",2]]},
+      {m:["Las cajas, atrás. Dóblalas, por favor.","The boxes — in the back. Fold them, please."],o:[["¡Ah! Está bien, entendido.","Oh! Okay, got it.","ok"],["¿Me enseñas?","Can you show me?","r"]]},
+      {m:["¡Perfecto, gracias!","Perfect, thank you!"],o:[["Sin problema.","No problem.","ok"],["Está bien.","Okay.","ok"]]}]}},
+"3":{
+ en:{scene:[["M","Run the salads to table nine, please.","Lleva las ensaladas a la mesa nueve, por favor."],["Y","Can you say that again?","¿Puedes decirlo otra vez?"],["M","Sure — the salads, to table nine.","Claro: las ensaladas, a la mesa nueve."],["Y","Table nine. Got it.","Mesa nueve. Entendido."]],
+  chunks:[["Can you say that again?","¿Puedes decirlo otra vez?"],["Again, please","Otra vez, por favor"],["Did you say nine?","¿Dijiste nueve?"],["Got it","Entendido"]],
+  hp:[{a:"Can you say that again?",q:"¿Qué significa?",opts:["¿Puedes repetirlo?","¿Puedes ayudarme?","¿Dónde está?"],ans:0},
+      {a:"Run the salads to table nine.",q:"¿A qué mesa?",opts:["9","5","19"],ans:0,fast:true}],
+  say:{p:["Take the bread to table seven.","Lleva el pan a la mesa siete."],r:["Can you say that again?","¿Puedes decirlo otra vez?"],ok:["can you say that again","say that again","can you repeat that"]},
+  rp:[{m:["Grab two waters and a lemonade for twelve.","Trae dos aguas y una limonada para la doce."],o:[["Can you say that again?","¿Puedes decirlo otra vez?","r"],["Got it — two waters, one lemonade.","Entendido: dos aguas y una limonada.","ok"]]},
+      {m:["You got it. Thanks!","Eso es. ¡Gracias!"],o:[["No problem.","Sin problema.","ok"]]}]},
+ es:{scene:[["M","Lleva las ensaladas a la mesa nueve, por favor.","Run the salads to table nine, please."],["Y","¿Puedes decirlo otra vez?","Can you say that again?"],["M","Claro: las ensaladas, a la mesa nueve.","Sure — the salads, to table nine."],["Y","Mesa nueve. Entendido.","Table nine. Got it."]],
+  chunks:[["¿Puedes decirlo otra vez?","Can you say that again?"],["Otra vez, por favor","Again, please"],["¿Dijiste nueve?","Did you say nine?"],["Entendido","Got it"]],
+  hp:[{a:"¿Puedes decirlo otra vez?",q:"What does it mean?",opts:["Can you say that again?","Can you help me?","Where is it?"],ans:0},
+      {a:"Lleva las ensaladas a la mesa nueve.",q:"Which table?",opts:["9","5","19"],ans:0,fast:true}],
+  say:{p:["Lleva el pan a la mesa siete.","Take the bread to table seven."],r:["¿Puedes decirlo otra vez?","Can you say that again?"],ok:["puedes decirlo otra vez","otra vez por favor","puedes repetirlo"]},
+  rp:[{m:["Trae dos aguas y una limonada para la doce.","Grab two waters and a lemonade for twelve."],o:[["¿Puedes decirlo otra vez?","Can you say that again?","r"],["Entendido: dos aguas y una limonada.","Got it — two waters, one lemonade.","ok"]]},
+      {m:["Eso es. ¡Gracias!","You got it. Thanks!"],o:[["Sin problema.","No problem.","ok"]]}]}},
+"4":{
+ en:{scene:[["M","We're gonna move the rail, restock the lowboy, and break down the patio.","Vamos a mover el rail, reponer el refri bajo y recoger el patio."],["Y","Can you speak slower, please?","¿Puedes hablar más despacio, por favor?"],["M","Of course. First — restock the lowboy fridge.","Claro. Primero, repón el refri bajo."],["Y","Okay, now I understand.","Okay, ahora entiendo."]],
+  chunks:[["Can you speak slower?","¿Puedes hablar más despacio?"],["A little slower, please","Un poco más despacio, por favor"],["Now I understand","Ahora entiendo"],["Thank you for your patience","Gracias por tu paciencia"]],
+  hp:[{a:"Can you speak slower?",q:"¿Qué significa?",opts:["¿Puedes hablar más despacio?","¿Puedes repetirlo?","¿Me ayudas?"],ans:0},
+      {a:"First, restock the lowboy fridge.",q:"¿Qué haces primero?",opts:["Reponer el refri bajo","Mover el rail","Recoger el patio"],ans:0,fast:true}],
+  say:{p:["We need more bread plates up front.","Necesitamos más platos de pan al frente."],fast:true,r:["Can you speak slower, please?","¿Puedes hablar más despacio, por favor?"],ok:["can you speak slower","speak slower please","a little slower please"]},
+  rp:[{m:["Take the highchair to the hostess stand and then refill station two.","Lleva la silla alta al podio y luego rellena la estación dos."],o:[["Can you speak slower?","¿Puedes hablar más despacio?","r"],["Okay — highchair first, then station two.","Okay: primero la silla, luego la estación dos.","ok"]]},
+      {m:["Exactly. Thanks!","Exacto. ¡Gracias!"],o:[["No problem.","Sin problema.","ok"]]}]},
+ es:{scene:[["M","Vamos a mover la estación, reponer el refri y recoger el patio.","We're gonna move the station, restock the fridge and break down the patio."],["Y","¿Puedes hablar más despacio, por favor?","Can you speak slower, please?"],["M","Claro. Primero, repón el refri bajo.","Of course. First — restock the lowboy fridge."],["Y","Está bien, ahora entiendo.","Okay, now I understand."]],
+  chunks:[["¿Puedes hablar más despacio?","Can you speak slower?"],["Un poco más despacio, por favor","A little slower, please"],["Ahora entiendo","Now I understand"],["Gracias por tu paciencia","Thank you for your patience"]],
+  hp:[{a:"¿Puedes hablar más despacio?",q:"What does it mean?",opts:["Can you speak slower?","Can you say that again?","Can you help me?"],ans:0},
+      {a:"Primero, repón el refri bajo.",q:"What do you do first?",opts:["Restock the lowboy fridge","Move the station","Break down the patio"],ans:0,fast:true}],
+  say:{p:["Necesitamos más platos de pan al frente.","We need more bread plates up front."],fast:true,r:["¿Puedes hablar más despacio, por favor?","Can you speak slower, please?"],ok:["puedes hablar mas despacio","mas despacio por favor"]},
+  rp:[{m:["Lleva la silla alta al podio y luego rellena la estación dos.","Take the highchair to the hostess stand, then refill station two."],o:[["¿Puedes hablar más despacio?","Can you speak slower?","r"],["Okay: primero la silla, luego la estación dos.","Okay — highchair first, then station two.","ok"]]},
+      {m:["Exacto. ¡Gracias!","Exactly. Thanks!"],o:[["Sin problema.","No problem.","ok"]]}]}},
+"5":{
+ en:{scene:[["M","Fold the napkins like this for dinner service.","Dobla las servilletas así para el servicio de la cena."],["Y","Can you show me?","¿Me enseñas?"],["M","Sure — watch. Corner to corner, then in half.","Claro, mira: esquina con esquina y luego a la mitad."],["Y","Like this?","¿Así?"],["M","Perfect.","Perfecto."]],
+  chunks:[["Can you show me?","¿Me enseñas? · ¿Me muestras?"],["Show me, please","Enséñame, por favor"],["Like this?","¿Así?"],["Watch","Mira"],["One more time","Una vez más"]],
+  hp:[{a:"Can you show me?",q:"¿Qué significa?",opts:["¿Me enseñas?","¿Lo hago yo?","¿Ya terminamos?"],ans:0},
+      {a:"Watch — corner to corner, then in half.",q:"¿Qué te está enseñando?",opts:["Cómo doblar","Cómo limpiar","Cómo cargar"],ans:0}],
+  say:{p:["Set the silverware like we do for brunch.","Pon los cubiertos como en el brunch."],r:["Can you show me?","¿Me enseñas?"],ok:["can you show me","show me please"]},
+  rp:[{m:["Can you polish these glasses?","¿Puedes pulir estos vasos?"],o:[["Yes — can you show me first?","Sí, ¿me enseñas primero?","r",1],["I got it.","Entendido.","ok",2]]},
+      {m:["Like this — with the steam, then the cloth.","Así: con el vapor y luego el paño."],o:[["Like this?","¿Así?","ok"],["One more time, please.","Una vez más, por favor.","r"]]},
+      {m:["Perfect. Thank you!","Perfecto. ¡Gracias!"],o:[["No problem.","Sin problema.","ok"]]}]},
+ es:{scene:[["M","Dobla las servilletas así para la cena.","Fold the napkins like this for dinner service."],["Y","¿Me enseñas?","Can you show me?"],["M","Claro, mira: esquina con esquina y luego a la mitad.","Sure — watch. Corner to corner, then in half."],["Y","¿Así?","Like this?"],["M","Perfecto.","Perfect."]],
+  chunks:[["¿Me enseñas?","Can you show me?"],["Enséñame, por favor","Show me, please"],["¿Así?","Like this?"],["Mira","Watch"],["Una vez más","One more time"]],
+  hp:[{a:"¿Me enseñas?",q:"What does it mean?",opts:["Can you show me?","Do I do it?","Are we done?"],ans:0},
+      {a:"Mira: esquina con esquina y luego a la mitad.",q:"What are they teaching you?",opts:["How to fold","How to clean","How to carry"],ans:0}],
+  say:{p:["Pon los cubiertos como en el brunch.","Set the silverware like we do for brunch."],r:["¿Me enseñas?","Can you show me?"],ok:["me ensenas","ensename por favor","me muestras"]},
+  rp:[{m:["¿Puedes pulir estos vasos?","Can you polish these glasses?"],o:[["Sí, ¿me enseñas primero?","Yes — can you show me first?","r",1],["Entendido.","I got it.","ok",2]]},
+      {m:["Así: con el vapor y luego el paño.","Like this — with the steam, then the cloth."],o:[["¿Así?","Like this?","ok"],["Una vez más, por favor.","One more time, please.","r"]]},
+      {m:["Perfecto. ¡Gracias!","Perfect. Thank you!"],o:[["Sin problema.","No problem.","ok"]]}]}},
+"6":{
+ en:{scene:[["M","Can you restock the napkins downstairs?","¿Puedes reponer las servilletas abajo?"],["Y","What does 'restock' mean?","¿Qué significa 'restock'?"],["M","Restock means fill it again — bring more.","'Restock' es volver a llenar: trae más."],["Y","Oh, I got it.","Ah, entendido."]],
+  chunks:[["What does that mean?","¿Qué significa eso?"],["What does 'restock' mean?","¿Qué significa 'restock'?"],["It means…","Significa…"],["Oh, I understand","Ah, entiendo"],["Restock","Reponer · volver a llenar"]],
+  hp:[{a:"What does 'restock' mean?",q:"¿Qué está preguntando?",opts:["El significado de una palabra","Dónde está algo","Quién lo hizo"],ans:0},
+      {a:"Can you restock the napkins downstairs?",q:"¿Qué debes hacer?",opts:["Reponer las servilletas abajo","Limpiar abajo","Subir las servilletas"],ans:0}],
+  say:{p:["Can you consolidate the ramekins?","¿Puedes juntar los ramekins?"],r:["What does 'consolidate' mean?","¿Qué significa 'consolidate'?"],ok:["what does consolidate mean","what does that mean"]},
+  rp:[{m:["Marry the ketchups before you leave, please.","'Casa' las salsas de tomate antes de irte, por favor."],o:[["What does 'marry' mean?","¿Qué significa 'marry'?","r",1],["Okay, I got it.","Okay, entendido.","ok",2]]},
+      {m:["It means combine the bottles — two halves into one.","Significa combinar las botellas: dos medias en una."],o:[["Oh! I got it.","¡Ah! Entendido.","ok"],["Can you show me?","¿Me enseñas?","r"]]},
+      {m:["You're all set. Good night!","Listo. ¡Buenas noches!"],o:[["Good night!","¡Buenas noches!","ok"]]}]},
+ es:{scene:[["M","¿Puedes reponer las servilletas abajo?","Can you restock the napkins downstairs?"],["Y","¿Qué significa 'reponer'?","What does 'reponer' mean?"],["M","'Reponer' es volver a llenar: trae más.","'Reponer' means fill it again — bring more."],["Y","Ah, entendido.","Oh, I got it."]],
+  chunks:[["¿Qué significa eso?","What does that mean?"],["¿Qué significa 'reponer'?","What does 'reponer' mean?"],["Significa…","It means…"],["Ah, entiendo","Oh, I understand"],["Reponer","Restock · fill again"]],
+  hp:[{a:"¿Qué significa 'reponer'?",q:"What are they asking?",opts:["The meaning of a word","Where something is","Who did it"],ans:0},
+      {a:"¿Puedes reponer las servilletas abajo?",q:"What should you do?",opts:["Restock the napkins downstairs","Clean downstairs","Bring the napkins up"],ans:0}],
+  say:{p:["¿Puedes marchar la mesa cuatro?","Can you fire table four?"],r:["¿Qué significa 'marchar'?","What does 'marchar' mean?"],ok:["que significa marchar","que significa eso"]},
+  rp:[{m:["'Casa' las salsas antes de irte, por favor.","Marry the sauces before you leave, please."],o:[["¿Qué significa 'casar'?","What does 'casar' mean?","r",1],["Okay, entendido.","Okay, got it.","ok",2]]},
+      {m:["Significa combinar las botellas: dos medias en una.","It means combine the bottles — two halves into one."],o:[["¡Ah! Entendido.","Oh! Got it.","ok"],["¿Me enseñas?","Can you show me?","r"]]},
+      {m:["Listo. ¡Buenas noches!","You're all set. Good night!"],o:[["¡Buenas noches!","Good night!","ok"]]}]}},
+"7":{
+ en:{scene:[["M","Hand me that tray, please.","Pásame esa charola, por favor."],["Y","Which one? This one?","¿Cuál? ¿Ésta?"],["M","No — the big one, next to the sink.","No, la grande, junto al fregadero."],["Y","Got it.","Entendido."]],
+  chunks:[["Which one?","¿Cuál?"],["This one?","¿Éste? · ¿Ésta?"],["That one","Ésa · aquélla"],["The big one","La grande"],["The clean ones","Los limpios"]],
+  hp:[{a:"Which one?",q:"¿Qué significa?",opts:["¿Cuál?","¿Cuándo?","¿Cuánto?"],ans:0},
+      {a:"The big one, next to the sink.",q:"¿Cuál charola quiere?",opts:["La grande junto al fregadero","La pequeña de arriba","La que está sucia"],ans:0}],
+  say:{p:["Grab me that container.","Tráeme ese contenedor."],r:["Which one? This one?","¿Cuál? ¿Éste?"],ok:["which one","this one","which one this one"]},
+  rp:[{m:["Bring the sauce from the walk-in.","Trae la salsa de la cámara fría."],o:[["Which one?","¿Cuál?","r",1],["I got it.","Entendido.","ok",2]]},
+      {m:["The red one — the marinara, on the top shelf.","La roja, la marinara, en la repisa de arriba."],o:[["This one? The red one?","¿Ésta? ¿La roja?","ok"],["Can you show me?","¿Me enseñas?","r"]]},
+      {m:["That's the one. Thanks!","Ésa es. ¡Gracias!"],o:[["No problem.","Sin problema.","ok"]]}]},
+ es:{scene:[["M","Pásame esa charola, por favor.","Hand me that tray, please."],["Y","¿Cuál? ¿Ésta?","Which one? This one?"],["M","No, la grande, junto al fregadero.","No — the big one, next to the sink."],["Y","Entendido.","Got it."]],
+  chunks:[["¿Cuál?","Which one?"],["¿Éste? · ¿Ésta?","This one?"],["Ésa · aquélla","That one"],["La grande","The big one"],["Los limpios","The clean ones"]],
+  hp:[{a:"¿Cuál?",q:"What does it mean?",opts:["Which one?","When?","How much?"],ans:0},
+      {a:"La grande, junto al fregadero.",q:"Which tray do they want?",opts:["The big one by the sink","The small one up top","The dirty one"],ans:0}],
+  say:{p:["Tráeme ese contenedor.","Grab me that container."],r:["¿Cuál? ¿Éste?","Which one? This one?"],ok:["cual","este","cual este"]},
+  rp:[{m:["Trae la salsa de la cámara.","Bring the sauce from the walk-in."],o:[["¿Cuál?","Which one?","r",1],["Entendido.","Got it.","ok",2]]},
+      {m:["La roja, la marinara, en la repisa de arriba.","The red one — the marinara, on the top shelf."],o:[["¿Ésta? ¿La roja?","This one? The red one?","ok"],["¿Me enseñas?","Can you show me?","r"]]},
+      {m:["Ésa es. ¡Gracias!","That's the one. Thanks!"],o:[["Sin problema.","No problem.","ok"]]}]}},
+"8":{
+ en:{scene:[["M","Put the high chairs away, please.","Guarda las sillas altas, por favor."],["Y","Where?","¿Dónde?"],["M","Over there, in the back, behind the host stand.","Allá atrás, detrás del podio."],["Y","Here?","¿Aquí?"],["M","Yes — right there.","Sí, justo ahí."]],
+  chunks:[["Where?","¿Dónde?"],["Here?","¿Aquí?"],["Over there","Allá"],["In the back","Atrás"],["Downstairs","Abajo"],["Right there","Justo ahí"]],
+  hp:[{a:"Over there, in the back.",q:"¿Dónde?",opts:["Allá atrás","Aquí adelante","Arriba"],ans:0},
+      {a:"Take the linens downstairs.",q:"¿Adónde las llevas?",opts:["Abajo","Afuera","A la barra"],ans:0}],
+  say:{p:["Put this away, please.","Guarda esto, por favor."],r:["Where? Here?","¿Dónde? ¿Aquí?"],ok:["where","where here","here"]},
+  rp:[{m:["Stack the bus tubs when you're done.","Apila las tinas cuando termines."],o:[["Where?","¿Dónde?","r",1],["I got it.","Entendido.","ok",2]]},
+      {m:["In the back, next to the dish pit.","Atrás, junto al lavado."],o:[["Over there?","¿Allá?","ok"],["Can you show me?","¿Me enseñas?","r"]]},
+      {m:["Yes, right there. Perfect.","Sí, justo ahí. Perfecto."],o:[["Okay!","¡Okay!","ok"]]}]},
+ es:{scene:[["M","Guarda las sillas altas, por favor.","Put the high chairs away, please."],["Y","¿Dónde?","Where?"],["M","Allá atrás, detrás del podio.","Over there, in the back, behind the host stand."],["Y","¿Aquí?","Here?"],["M","Sí, justo ahí.","Yes — right there."]],
+  chunks:[["¿Dónde?","Where?"],["¿Aquí?","Here?"],["Allá","Over there"],["Atrás","In the back"],["Abajo","Downstairs"],["Justo ahí","Right there"]],
+  hp:[{a:"Allá atrás.",q:"Where?",opts:["Over there, in the back","Up front","Upstairs"],ans:0},
+      {a:"Lleva los manteles abajo.",q:"Where do you take them?",opts:["Downstairs","Outside","To the bar"],ans:0}],
+  say:{p:["Guarda esto, por favor.","Put this away, please."],r:["¿Dónde? ¿Aquí?","Where? Here?"],ok:["donde","donde aqui","aqui"]},
+  rp:[{m:["Apila las tinas cuando termines.","Stack the bus tubs when you're done."],o:[["¿Dónde?","Where?","r",1],["Entendido.","Got it.","ok",2]]},
+      {m:["Atrás, junto al lavado.","In the back, next to the dish pit."],o:[["¿Allá?","Over there?","ok"],["¿Me enseñas?","Can you show me?","r"]]},
+      {m:["Sí, justo ahí. Perfecto.","Yes, right there. Perfect."],o:[["¡Okay!","Okay!","ok"]]}]}},
+"9":{
+ en:{scene:[["Y","Can you help me carry this? It's heavy.","¿Me ayudas a cargar esto? Está pesado."],["C","Of course. Ready? One, two, three.","Claro. ¿Listo? Una, dos, tres."],["Y","Thanks — I owe you one.","Gracias, te debo una."]],
+  chunks:[["Can you help me?","¿Me puedes ayudar?"],["I need help","Necesito ayuda"],["Can you help me carry this?","¿Me ayudas a cargar esto?"],["It's heavy","Está pesado"],["Of course","Claro"],["I owe you one","Te debo una"]],
+  hp:[{a:"Can you help me?",q:"¿Qué significa?",opts:["¿Me ayudas?","¿Me escuchas?","¿Me esperas?"],ans:0},
+      {a:"Can you help me carry this? It's heavy.",q:"¿Qué necesita?",opts:["Ayuda para cargar algo pesado","Ayuda para limpiar","Ayuda para contar"],ans:0}],
+  say:{p:["Hey, you good?","Oye, ¿todo bien?"],r:["Can you help me carry this?","¿Me ayudas a cargar esto?"],ok:["can you help me","i need help","can you help me carry this"]},
+  rp:[{w:"C",m:["Whoa, that's a lot of dishes.","Uf, cuántos platos."],o:[["Can you help me?","¿Me ayudas?","ok",1],["I got it, thanks.","Yo puedo, gracias.","ok",2]]},
+      {w:"C",m:["Of course. I'll grab this side.","Claro. Yo agarro este lado."],o:[["Thanks — I owe you one.","Gracias, te debo una.","ok"]]},
+      {w:"C",m:["Anytime!","¡Cuando quieras!"],o:[["Okay!","¡Está bien!","ok"]]}]},
+ es:{scene:[["Y","¿Me ayudas a cargar esto? Está pesado.","Can you help me carry this? It's heavy."],["C","Claro. ¿Listo? Una, dos, tres.","Of course. Ready? One, two, three."],["Y","Gracias, te debo una.","Thanks — I owe you one."]],
+  chunks:[["¿Me puedes ayudar?","Can you help me?"],["Necesito ayuda","I need help"],["¿Me ayudas a cargar esto?","Can you help me carry this?"],["Está pesado","It's heavy"],["Claro","Of course"],["Te debo una","I owe you one"]],
+  hp:[{a:"¿Me puedes ayudar?",q:"What does it mean?",opts:["Can you help me?","Can you hear me?","Can you wait for me?"],ans:0},
+      {a:"¿Me ayudas a cargar esto? Está pesado.",q:"What do they need?",opts:["Help carrying something heavy","Help cleaning","Help counting"],ans:0}],
+  say:{p:["Oye, ¿todo bien?","Hey, you good?"],r:["¿Me ayudas a cargar esto?","Can you help me carry this?"],ok:["me ayudas","necesito ayuda","me ayudas a cargar esto","me puedes ayudar"]},
+  rp:[{w:"C",m:["Uf, cuántos platos.","Whoa, that's a lot of dishes."],o:[["¿Me ayudas?","Can you help me?","ok",1],["Yo puedo, gracias.","I got it, thanks.","ok",2]]},
+      {w:"C",m:["Claro. Yo agarro este lado.","Of course. I'll grab this side."],o:[["Gracias, te debo una.","Thanks — I owe you one.","ok"]]},
+      {w:"C",m:["¡Cuando quieras!","Anytime!"],o:[["¡Está bien!","Okay!","ok"]]}]}},
+"21":{
+ en:{chunks:[["the kitchen","la cocina"],["the dining room","el comedor"],["the bar","la barra"],["the bathroom","el baño"],["upstairs","arriba"],["downstairs","abajo"],["the walk-in","la cámara fría"]],
+  hp:[{a:"Take this to the walk-in, please.",q:"¿Adónde vas?",opts:["A la cámara fría","Al baño","Arriba"],ans:0},
+      {a:"The bar needs more ice.",q:"¿Quién necesita hielo?",opts:["La barra","La cocina","El comedor"],ans:0}]},
+ es:{chunks:[["la cocina","the kitchen"],["el comedor","the dining room"],["la barra","the bar"],["el baño","the bathroom"],["arriba","upstairs"],["abajo","downstairs"],["la cámara fría","the walk-in"]],
+  hp:[{a:"Lleva esto a la cámara fría, por favor.",q:"Where do you go?",opts:["To the walk-in","To the bathroom","Upstairs"],ans:0},
+      {a:"La barra necesita más hielo.",q:"Who needs ice?",opts:["The bar","The kitchen","The dining room"],ans:0}]}}
+};
+
+/* ---- review lesson 10 + legacy lesson steps ---- */
+const LESSON_STEPS={
+"10":[
+  {type:"lib",id:"rapid",data:{
+    en:{pairs:[["I got it.","Entendido"],["Can you say that again?","¿Puedes repetirlo?"],["Can you speak slower?","Más despacio, por favor"],["Can you show me?","¿Me enseñas?"],["What does that mean?","¿Qué significa eso?"],["Which one?","¿Cuál?"],["Over there","Allá"],["Can you help me?","¿Me ayudas?"]]},
+    es:{pairs:[["Entendido","I got it"],["¿Puedes repetirlo?","Can you say that again?"],["¿Más despacio?","Can you speak slower?"],["¿Me enseñas?","Can you show me?"],["¿Qué significa eso?","What does that mean?"],["¿Cuál?","Which one?"],["Allá","Over there"],["¿Me ayudas?","Can you help me?"]]}}},
+  {type:"hpx",d:{
+    en:{a:"Can you restock the napkins downstairs?",q:"¿Qué debes hacer?",opts:["Reponer las servilletas abajo","Doblar servilletas aquí","Tirar las servilletas"],ans:0,fast:true},
+    es:{a:"¿Puedes reponer las servilletas abajo?",q:"What do you do?",opts:["Restock the napkins downstairs","Fold napkins here","Throw the napkins away"],ans:0,fast:true}}},
+  {type:"hpx",d:{
+    en:{a:"Grab the big tray and put it over there, in the back.",q:"¿Cuál y adónde?",opts:["La grande · atrás","La pequeña · arriba","La sucia · afuera"],ans:0},
+    es:{a:"Agarra la charola grande y ponla allá atrás.",q:"Which one, and where?",opts:["The big one · in the back","The small one · upstairs","The dirty one · outside"],ans:0}}},
+  {type:"rpx",d:{
+    en:[{m:["Morning! Can you wipe down the patio tables?","¡Buenos días! ¿Puedes limpiar las mesas del patio?"],o:[["Okay, I got it.","Okay, entendido.","ok"],["Can you say that again?","¿Puedes repetirlo?","r"]]},
+        {m:["Then restock the napkins at station two.","Luego repón las servilletas en la estación dos."],o:[["What does 'restock' mean?","¿Qué significa 'restock'?","r",2],["I got it.","Entendido.","ok",3]]},
+        {m:["It means bring more — fill them again.","Significa traer más, volver a llenarlas."],o:[["Oh, I got it.","Ah, entendido.","ok"]]},
+        {m:["Last thing — can you help Maria carry the ice?","Lo último: ¿ayudas a María a cargar el hielo?"],o:[["Of course.","Claro.","ok"],["Which one is Maria?","¿Cuál es María?","r"]]},
+        {m:["Great first shift. See you tomorrow!","¡Gran primer turno! ¡Hasta mañana!"],o:[["Thank you! See you tomorrow.","¡Gracias! Hasta mañana.","ok"]]}],
+    es:[{m:["¡Buenos días! ¿Puedes limpiar las mesas del patio?","Morning! Can you wipe down the patio tables?"],o:[["Está bien, entendido.","Okay, got it.","ok"],["¿Puedes repetirlo?","Can you say that again?","r"]]},
+        {m:["Luego repón las servilletas en la estación dos.","Then restock the napkins at station two."],o:[["¿Qué significa 'reponer'?","What does 'reponer' mean?","r",2],["Entendido.","Got it.","ok",3]]},
+        {m:["Significa traer más, volver a llenarlas.","It means bring more — fill them again."],o:[["Ah, entendido.","Oh, got it.","ok"]]},
+        {m:["Lo último: ¿ayudas a María a cargar el hielo?","Last thing — can you help Maria carry the ice?"],o:[["Claro.","Of course.","ok"],["¿Cuál es María?","Which one is Maria?","r"]]},
+        {m:["¡Gran primer turno! ¡Hasta mañana!","Great first shift. See you tomorrow!"],o:[["¡Gracias! Hasta mañana.","Thank you! See you tomorrow.","ok"]]}]}},
+  {type:"summary"}],
+"11":"numbers",
+"21":[{type:"chunks"},{type:"lib",id:"map"},{type:"hp",i:0},{type:"hp",i:1},{type:"summary"}],
+"40":[{type:"lib",id:"seq"},{type:"lib",id:"order",data:{en:{sentence:"First heat the pan, then add the oil.",trans:"Primero calienta la sartén, luego agrega el aceite.",extra:["finally","now"]},es:{sentence:"Primero calienta la sartén, luego agrega el aceite.",trans:"First heat the pan, then add the oil.",extra:["por último","ahora"]}}},{type:"summary"}],
+"41":[{type:"lib",id:"rapid"},{type:"lib",id:"dict",data:{en:{text:"Behind you, hot pan.",trans:"Detrás de ti, sartén caliente."},es:{text:"Detrás de ti, sartén caliente.",trans:"Behind you, hot pan."}}},{type:"summary"}],
+"50":[{type:"pick",set:"greet"},{type:"plates",n:4},{type:"lib",id:"rapid"},{type:"lib",id:"conj"},{type:"lib",id:"dialogue"},{type:"summary"}],
+"51":[{type:"vocab",set:"greet"},{type:"pick",set:"greet"},{type:"pick",set:"greet"},{type:"lib",id:"order",data:{en:{sentence:"Nice to meet you, chef.",trans:"Mucho gusto, chef.",extra:["morning","thank"]},es:{sentence:"Mucho gusto, chef.",trans:"Nice to meet you, chef.",extra:["hola","gracias"]}}},{type:"lib",id:"dict",data:{en:{text:"Good morning, everyone.",trans:"Buenos días a todos."},es:{text:"Buenos días a todos.",trans:"Good morning, everyone."}}},{type:"summary"}],
+"55":[{type:"lib",id:"order"},{type:"lib",id:"speak"},{type:"lib",id:"dict",data:{en:{text:"Where is the sauce?",trans:"¿Dónde está la salsa?"},es:{text:"¿Dónde está la salsa?",trans:"Where is the sauce?"}}},{type:"summary"}],
+"62":[{type:"vocab",set:"days"},{type:"pick",set:"days"},{type:"pick",set:"days"},{type:"lib",id:"dict",data:{en:{text:"I work Friday and Saturday.",trans:"Trabajo el viernes y el sábado."},es:{text:"Trabajo el viernes y el sábado.",trans:"I work Friday and Saturday."}}},{type:"pick",set:"days"},{type:"summary"}],
+"126":[{type:"lib",id:"ticket"},{type:"lib",id:"dialogue"},{type:"summary"}]
+};
+
+/* ---- course structure: levels → units → lessons ---- */
+const LEVELS=[
+ {t:{es:"Nivel 1 · Supervivencia",en:"Level 1 · Survival"},units:[
+  {n:"1",total:10,t:{es:["Sobrevivir en inglés","Las frases que te rescatan en cualquier conversación"],en:["Surviving in Spanish","The phrases that rescue you in any conversation"]},
+   lessons:[{id:"1"},{id:"2"},{id:"3"},{id:"4"},{id:"5"},{id:"6"},{id:"7"},{id:"8"},{id:"9"},{id:"10"}]},
+  {n:"2",total:10,t:{es:["Números, tiempo y mesas","Mesas, cantidades, precios, horas"],en:["Numbers, time & tables","Tables, quantities, prices, times"]},lessons:[{id:"11"}]},
+  {n:"3",total:10,t:{es:["Tu restaurante","Cocina, estaciones, ¿dónde va esto?"],en:["Your restaurant","Kitchen, stations, where does this go?"]},lessons:[{id:"21"}]},
+  {n:"4",total:10,t:{es:["Instrucciones","Trae, lleva, limpia, repón — y pasos múltiples"],en:["Instructions","Bring, take, clean, restock — and multi-step"]},lessons:[{id:"40"}]}]},
+ {t:{es:"Nivel 2 · El equipo",en:"Level 2 · The team"},units:[
+  {n:"5",total:10,t:{es:["Lenguaje de cocina","¡Atrás! ¡Esquina! ¡Caliente! — los gritos del turno"],en:["Kitchen language","Behind! Corner! Hot! — the callouts of the shift"]},lessons:[{id:"41"},{id:"50"}]},
+  {n:"6",total:10,t:{es:["Conversaciones con compañeros","Pedir ayuda, ofrecer, confirmar, corregir"],en:["Coworker conversations","Asking for help, offering, confirming, correcting"]},lessons:[{id:"51"},{id:"55"}]},
+  {n:"7",total:10,t:{es:["Trabajo y horarios","Turnos, llegar tarde, cubrir, días libres"],en:["Work & scheduling","Shifts, running late, covering, time off"]},lessons:[{id:"62"}]}]},
+ {t:{es:"Nivel 3 · Clientes",en:"Level 3 · Guests"},units:[
+  {n:"8",total:10,t:{es:["Básicos con clientes","Recibir, ¿cuántos?, por aquí, un momento"],en:["Guest basics","Welcoming, how many?, right this way, one moment"]},lessons:[]},
+  {n:"9",total:10,t:{es:["Correr comida","¿Quién pidió el pollo? Cuidado, quema"],en:["Food running","Who had the chicken? Careful, it's hot"]},lessons:[]},
+  {n:"10",total:10,t:{es:["Inglés de servidor","Saludar, tomar la orden, recomendar"],en:["Server Spanish","Greeting, taking orders, recommending"]},lessons:[]}]},
+ {t:{es:"Rutas · Elige tu camino",en:"Paths · Pick your track"},units:[
+  {n:"S",total:20,t:{es:["Ruta · Servidor","Menú, alergias, problemas, la cuenta"],en:["Path · Server","Menu, allergies, problems, the check"]},lessons:[]},
+  {n:"K",total:15,t:{es:["Ruta · Cocina","Comandas, prep, tiempos, seguridad"],en:["Path · Kitchen","Tickets, prep, timing, safety"]},lessons:[{id:"126"}]}]}
+];
+const LESSON_TITLES={
+ es:{"1":"Yes · No · Okay · I got it","2":"I don't understand","3":"Can you say that again?","4":"Can you speak slower?","5":"Can you show me?","6":"What does ___ mean?","7":"Which one? · This one?","8":"Where? · Here?","9":"Can you help me?","10":"Repaso · Tu primer turno en inglés",
+  "11":"Números del 1 al 10","21":"Tu restaurante","40":"Instrucciones de varios pasos","41":"Avisos de cocina","50":"Reto · Turno ocupado","51":"Saludos y presentaciones","55":"Pedir y ubicar","62":"Días y horarios","126":"La comanda y el chef"},
+ en:{"1":"Sí · No · Está bien · Entendido","2":"No entiendo","3":"¿Puedes decirlo otra vez?","4":"¿Puedes hablar más despacio?","5":"¿Me enseñas?","6":"¿Qué significa ___?","7":"¿Cuál? · ¿Éste?","8":"¿Dónde? · ¿Aquí?","9":"¿Me ayudas?","10":"Review · Your first shift in Spanish",
+  "11":"Numbers 1–10","21":"Your restaurant","40":"Multi-step instructions","41":"Kitchen callouts","50":"Challenge · Busy shift","51":"Greetings & introductions","55":"Asking and locating","62":"Days & schedules","126":"The ticket and the chef"}
+};
+/* the lesson formula: cold-open challenge → see it → learn it → use it → get challenged → realistic situation */
+const LOOP_STEPS=()=>[{type:"hp",i:0},{type:"scene"},{type:"chunks"},{type:"fillx"},{type:"bld"},{type:"hp",i:1},{type:"tf"},{type:"say"},{type:"rp"},{type:"summary"}];
+function stepCount(id){
+  if(SIT[id]&&SIT[id].en&&SIT[id].en.scene)return 9;
+  const S=LESSON_STEPS[id];
+  return S==="numbers"?7:(S?S.length-1:0);
+}
+let currentLesson="1";
+
+/* =========================================================
+   GAME LAYER — fill-the-blank, build-the-sentence, true/false
+   per lesson (merged into SIT), skills, and the Unit-1 mission.
+   ========================================================= */
+const EXTRA={
+"1":{en:{fill:{s:"Okay, I ___ it.",tr:"Okay, entendido.",opts:["got","clean","run","walk"],ans:0},
+        bld:{sentence:"Okay, I got it.",trans:"Okay, entendido.",extra:["no","where"]},
+        tf:{s:"'I got it' significa «entendido».",truth:true}},
+     es:{fill:{s:"Está bien, ___.",tr:"Okay, got it.",opts:["entendido","limpio","corriendo","mañana"],ans:0},
+        bld:{sentence:"Está bien, entendido.",trans:"Okay, got it.",extra:["no","dónde"]},
+        tf:{s:"'Entendido' means 'I got it.'",truth:true}}},
+"2":{en:{fill:{s:"Sorry, I ___ understand.",tr:"Perdón, no entiendo.",opts:["don't","do","can","am"],ans:0},
+        bld:{sentence:"Sorry, I don't understand.",trans:"Perdón, no entiendo.",extra:["yes","slower"]},
+        tf:{s:"'No problem' significa «gran problema».",truth:false}},
+     es:{fill:{s:"Perdón, no ___.",tr:"Sorry, I don't understand.",opts:["entiendo","corro","duermo","llego"],ans:0},
+        bld:{sentence:"Perdón, no entiendo.",trans:"Sorry, I don't understand.",extra:["sí","despacio"]},
+        tf:{s:"'No hay problema' means 'big problem.'",truth:false}}},
+"3":{en:{fill:{s:"Can you ___ that again?",tr:"¿Puedes decirlo otra vez?",opts:["say","walk","eat","clean"],ans:0},
+        bld:{sentence:"Can you say that again?",trans:"¿Puedes decirlo otra vez?",extra:["slower","what"]},
+        tf:{s:"'Again' significa «otra vez».",truth:true}},
+     es:{fill:{s:"¿Puedes ___ otra vez?",tr:"Can you say that again?",opts:["decirlo","comerlo","verlo","abrirlo"],ans:0},
+        bld:{sentence:"¿Puedes decirlo otra vez?",trans:"Can you say that again?",extra:["despacio","qué"]},
+        tf:{s:"'Otra vez' means 'again.'",truth:true}}},
+"4":{en:{fill:{s:"Can you speak ___?",tr:"¿Puedes hablar más despacio?",opts:["slower","taller","greener","harder"],ans:0},
+        bld:{sentence:"Can you speak slower, please?",trans:"¿Puedes hablar más despacio, por favor?",extra:["again","fast"]},
+        tf:{s:"'Slower' significa «más rápido».",truth:false}},
+     es:{fill:{s:"¿Puedes hablar más ___?",tr:"Can you speak slower?",opts:["despacio","verde","alto","tarde"],ans:0},
+        bld:{sentence:"¿Puedes hablar más despacio, por favor?",trans:"Can you speak slower, please?",extra:["otra","rápido"]},
+        tf:{s:"'Despacio' means 'faster.'",truth:false}}},
+"5":{en:{fill:{s:"Can you ___ me?",tr:"¿Me enseñas?",opts:["show","rain","sleep","close"],ans:0},
+        bld:{sentence:"Can you show me?",trans:"¿Me enseñas?",extra:["watch","this"]},
+        tf:{s:"'Watch' significa «mira».",truth:true}},
+     es:{fill:{s:"¿Me ___?",tr:"Can you show me?",opts:["enseñas","duermes","cierras","vendes"],ans:0},
+        bld:{sentence:"Enséñame, por favor.",trans:"Show me, please.",extra:["mira","así"]},
+        tf:{s:"'Mira' means 'watch.'",truth:true}}},
+"6":{en:{fill:{s:"What does 'restock' ___?",tr:"¿Qué significa 'restock'?",opts:["mean","make","move","meet"],ans:0},
+        bld:{sentence:"What does that mean?",trans:"¿Qué significa eso?",extra:["where","who"]},
+        tf:{s:"'Restock' significa «tirar a la basura».",truth:false}},
+     es:{fill:{s:"¿Qué ___ 'reponer'?",tr:"What does 'reponer' mean?",opts:["significa","camina","cocina","llega"],ans:0},
+        bld:{sentence:"¿Qué significa eso?",trans:"What does that mean?",extra:["dónde","quién"]},
+        tf:{s:"'Reponer' means 'throw away.'",truth:false}}},
+"7":{en:{fill:{s:"___ one? This one?",tr:"¿Cuál? ¿Éste?",opts:["Which","Who","Why","When"],ans:0},
+        bld:{sentence:"Which one? This one?",trans:"¿Cuál? ¿Éste?",extra:["where","big"]},
+        tf:{s:"'The big one' significa «el grande».",truth:true}},
+     es:{fill:{s:"¿___? ¿Éste?",tr:"Which one? This one?",opts:["Cuál","Quién","Cuándo","Cuánto"],ans:0},
+        bld:{sentence:"¿Cuál? ¿Éste?",trans:"Which one? This one?",extra:["dónde","grande"]},
+        tf:{s:"'La grande' means 'the big one.'",truth:true}}},
+"8":{en:{fill:{s:"Over ___, in the back.",tr:"Allá, atrás.",opts:["there","here","this","now"],ans:0},
+        bld:{sentence:"Over there, in the back.",trans:"Allá, atrás.",extra:["here","up"]},
+        tf:{s:"'Downstairs' significa «arriba».",truth:false}},
+     es:{fill:{s:"Allá, ___.",tr:"Over there, in the back.",opts:["atrás","mañana","caliente","nueve"],ans:0},
+        bld:{sentence:"Allá atrás, junto al lavado.",trans:"Over there in the back, by the dish pit.",extra:["aquí","arriba"]},
+        tf:{s:"'Abajo' means 'upstairs.'",truth:false}}},
+"9":{en:{fill:{s:"Can you ___ me carry this?",tr:"¿Me ayudas a cargar esto?",opts:["help","make","take","show"],ans:0},
+        bld:{sentence:"Can you help me carry this?",trans:"¿Me ayudas a cargar esto?",extra:["heavy","please"]},
+        tf:{s:"'It's heavy' significa «está pesado».",truth:true}},
+     es:{fill:{s:"¿Me ayudas a ___ esto?",tr:"Can you help me carry this?",opts:["cargar","cantar","cerrar","comprar"],ans:0},
+        bld:{sentence:"¿Me ayudas a cargar esto?",trans:"Can you help me carry this?",extra:["pesado","claro"]},
+        tf:{s:"'Está pesado' means 'it's heavy.'",truth:true}}},
+"21":{en:{tapimg:[{word:"the tray",q:"¿Cuál es la charola?",icons:["tray","plate","glass","fork"],ans:0},
+                  {word:"the napkin",q:"¿Cuál es la servilleta?",icons:["knife","napkin","spoon","towel"],ans:1}],
+         missing:{setup:["plate","plate","glass","glass"],miss:2,missIcon:"fork",q:"La mesa es para dos. ¿Qué falta?",opts:["Forks","Glasses","Plates"],ans:0,word:"forks"},
+         fill:{s:"Can you grab me two ___?",tr:"¿Me traes dos tenedores?",opts:["forks","plates","glasses","napkins"],ans:0}},
+      es:{tapimg:[{word:"la charola",q:"Which one is the tray?",icons:["tray","plate","glass","fork"],ans:0},
+                  {word:"la servilleta",q:"Which one is the napkin?",icons:["knife","napkin","spoon","towel"],ans:1}],
+         missing:{setup:["plate","plate","glass","glass"],miss:2,missIcon:"fork",q:"The table is set for two. What's missing?",opts:["Tenedores","Vasos","Platos"],ans:0,word:"tenedores"},
+         fill:{s:"¿Me traes dos ___?",tr:"Can you grab me two forks?",opts:["tenedores","platos","vasos","servilletas"],ans:0}}}
+};
+Object.keys(EXTRA).forEach(id=>{ if(!SIT[id])SIT[id]={en:{},es:{}}; ["en","es"].forEach(d=>Object.assign(SIT[id][d]=SIT[id][d]||{},EXTRA[id][d])); });
+
+/* skills — what each lesson unlocks (shown on the summary) */
+const SKILLS={
+ es:{"1":"Ya puedes confirmar que entendiste","2":"Ya puedes avisar cuando no entiendes","3":"Ya puedes pedir que te lo repitan","4":"Ya puedes pedir que hablen más despacio","5":"Ya puedes pedir que te muestren cómo","6":"Ya puedes preguntar qué significa una palabra","7":"Ya puedes aclarar cuál de las cosas es","8":"Ya puedes preguntar y entender dónde","9":"Ya puedes pedir ayuda a un compañero","10":"Sobreviviste tu primer turno en inglés","11":"Ya entiendes los números del 1 al 10","21":"Ya conoces las áreas y objetos del restaurante","40":"Ya sigues instrucciones de varios pasos","41":"Ya entiendes los avisos de la cocina","50":"Aguantaste un turno ocupado","51":"Ya puedes saludar y presentarte","55":"Ya puedes pedir cosas y ubicarlas","62":"Ya entiendes días y horarios","126":"Ya lees una comanda y respondes al chef"},
+ en:{"1":"You can confirm you understood","2":"You can say when you don't understand","3":"You can ask someone to repeat","4":"You can ask someone to slow down","5":"You can ask someone to show you how","6":"You can ask what a word means","7":"You can clarify which one they mean","8":"You can ask and understand where","9":"You can ask a coworker for help","10":"You survived your first shift in Spanish","11":"You understand numbers 1–10","21":"You know the restaurant's areas and objects","40":"You can follow multi-step instructions","41":"You understand kitchen callouts","50":"You handled a busy shift","51":"You can greet and introduce yourself","55":"You can ask for things and locate them","62":"You understand days and schedules","126":"You can read a ticket and answer the chef"}
+};
+
+/* lesson 10 — speed round + shift conversation + THE MISSION */
+LESSON_STEPS["10"]=[
+  {type:"lib",id:"rapid",data:{
+    en:{pairs:[["I got it.","Entendido"],["Can you say that again?","¿Puedes repetirlo?"],["Can you speak slower?","Más despacio, por favor"],["Can you show me?","¿Me enseñas?"],["What does that mean?","¿Qué significa eso?"],["Which one?","¿Cuál?"],["Over there","Allá"],["Can you help me?","¿Me ayudas?"]]},
+    es:{pairs:[["Entendido","I got it"],["¿Puedes repetirlo?","Can you say that again?"],["¿Más despacio?","Can you speak slower?"],["¿Me enseñas?","Can you show me?"],["¿Qué significa eso?","What does that mean?"],["¿Cuál?","Which one?"],["Allá","Over there"],["¿Me ayudas?","Can you help me?"]]}}},
+  {type:"rpx",d:{
+    en:[{m:["Morning! Can you wipe down the patio tables?","¡Buenos días! ¿Puedes limpiar las mesas del patio?"],o:[["Okay, I got it.","Okay, entendido.","ok"],["Can you say that again?","¿Puedes repetirlo?","r"]]},
+        {m:["Then restock the napkins at station two.","Luego repón las servilletas en la estación dos."],o:[["What does 'restock' mean?","¿Qué significa 'restock'?","r",2],["I got it.","Entendido.","ok",3]]},
+        {m:["It means bring more — fill them again.","Significa traer más, volver a llenarlas."],o:[["Oh, I got it.","Ah, entendido.","ok"]]},
+        {m:["Last thing — can you help Maria carry the ice?","Lo último: ¿ayudas a María a cargar el hielo?"],o:[["Of course.","Claro.","ok"],["Which one is Maria?","¿Cuál es María?","r"]]},
+        {m:["Great first shift. See you tomorrow!","¡Gran primer turno! ¡Hasta mañana!"],o:[["Thank you! See you tomorrow.","¡Gracias! Hasta mañana.","ok"]]}],
+    es:[{m:["¡Buenos días! ¿Puedes limpiar las mesas del patio?","Morning! Can you wipe down the patio tables?"],o:[["Está bien, entendido.","Okay, got it.","ok"],["¿Puedes repetirlo?","Can you say that again?","r"]]},
+        {m:["Luego repón las servilletas en la estación dos.","Then restock the napkins at station two."],o:[["¿Qué significa 'reponer'?","What does 'reponer' mean?","r",2],["Entendido.","Got it.","ok",3]]},
+        {m:["Significa traer más, volver a llenarlas.","It means bring more — fill them again."],o:[["Ah, entendido.","Oh, got it.","ok"]]},
+        {m:["Lo último: ¿ayudas a María a cargar el hielo?","Last thing — can you help Maria carry the ice?"],o:[["Claro.","Of course.","ok"],["¿Cuál es María?","Which one is Maria?","r"]]},
+        {m:["¡Gran primer turno! ¡Hasta mañana!","Great first shift. See you tomorrow!"],o:[["¡Gracias! Hasta mañana.","Thank you! See you tomorrow.","ok"]]}]}},
+  {type:"mission",d:{
+    en:{name:"La hora pico",rounds:[
+      {k:"pick",a:"Table six needs water.",q:"¿Qué mesa necesita agua?",opts:["2","4","6","8"],ans:2,xp:10},
+      {k:"pick",a:"Can you grab me three forks?",q:"¿Qué te pide?",opts:["Tres tenedores","Tres cucharas","Tres vasos"],ans:0,xp:10},
+      {k:"first",a:"Clear twelve, then refill eight.",q:"¿Qué haces primero?",opts:["Limpiar la mesa 12","Rellenar la 8"],ans:0,xp:20},
+      {k:"pick",a:"Restock the napkins downstairs, please.",q:"¿Qué debes hacer?",opts:["Reponer servilletas abajo","Subir manteles","Doblar servilletas aquí"],ans:0,xp:10},
+      {k:"tap",a:"Grab two waters and take them to table fourteen.",q:"Toca en el orden correcto",board:[["water","water"],["fork","fork"],["table","table 12"],["table","table 14"]],seq:[0,0,3],xp:30}]},
+    es:{name:"The dinner rush",rounds:[
+      {k:"pick",a:"La mesa seis necesita agua.",q:"Which table needs water?",opts:["2","4","6","8"],ans:2,xp:10},
+      {k:"pick",a:"¿Me traes tres tenedores?",q:"What do they want?",opts:["Three forks","Three spoons","Three glasses"],ans:0,xp:10},
+      {k:"first",a:"Limpia la doce y luego rellena la ocho.",q:"What do you do first?",opts:["Clear table 12","Refill 8"],ans:0,xp:20},
+      {k:"pick",a:"Repón las servilletas abajo, por favor.",q:"What should you do?",opts:["Restock napkins downstairs","Take tablecloths upstairs","Fold napkins here"],ans:0,xp:10},
+      {k:"tap",a:"Toma dos aguas y llévalas a la mesa catorce.",q:"Tap in the right order",board:[["water","agua"],["fork","tenedor"],["table","mesa 12"],["table","mesa 14"]],seq:[0,0,3],xp:30}]}}},
+  {type:"summary"}];
+
+/* lesson 21 — objects get the game treatment: tap the image, what's missing */
+LESSON_STEPS["21"]=[{type:"chunks"},{type:"tapimg",i:0},{type:"tapimg",i:1},{type:"lib",id:"map"},{type:"hp",i:0},{type:"missing"},{type:"fillx"},{type:"summary"}];
+
+/* simple line icons for object games (match the design system, stroke 1.75) */
+const OBJ={
+ fork:`<path d="M9 3v6M12 3v6M15 3v6M9 7a3 3 0 006 0M12 9v12"/>`,
+ spoon:`<ellipse cx="12" cy="7" rx="3.5" ry="4.5"/><path d="M12 11.5V21"/>`,
+ knife:`<path d="M10 3c4.5 3 5.5 8 5.5 12l-5.5 1.5V3zM12.8 17.5V21"/>`,
+ plate:`<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/>`,
+ glass:`<path d="M8 3h8l-1.4 18H9.4L8 3z"/>`,
+ water:`<path d="M8 3h8l-1.4 18H9.4L8 3z"/><path d="M9.2 11h5.6"/>`,
+ napkin:`<rect x="5" y="5" width="14" height="14" rx="2"/><path d="M5 10.5h14"/>`,
+ tray:`<rect x="4" y="9" width="16" height="7" rx="2.5"/><path d="M2 12.5h2M20 12.5h2"/>`,
+ towel:`<path d="M7 3h10v14a2 2 0 01-2 2H9a2 2 0 01-2-2V3z"/><path d="M7 7h10"/>`,
+ table:`<rect x="4" y="7" width="16" height="4" rx="1"/><path d="M6.5 11v8M17.5 11v8"/>`
+};
+const objIcon=(name,size=34)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${OBJ[name]||""}</svg>`;
+
+/* =========================================================
+   STATE
+   ========================================================= */
+let target="en";           // language being learned
+let native=()=>target==="en"?"es":"en";
+let T=()=>UI[native()];
+let steps=[], idx=0, results=[], picked=null, locked=false;
+let lessonXP=0;
+const award=n=>{lessonXP+=n;};
+const xpTotal=()=>{try{return +localStorage.getItem("ll_xp")||0}catch(e){return 0}};
+const xpSave=n=>{try{localStorage.setItem("ll_xp",String(xpTotal()+n))}catch(e){}};
+
+const $=s=>document.querySelector(s);
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+const strip=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
+
+function speak(word, lang=target, rate=.95){
+  if(!("speechSynthesis" in window))return;
+  const u=new SpeechSynthesisUtterance(word);u.lang=VOICE[lang];u.rate=rate;
+  speechSynthesis.cancel();speechSynthesis.speak(u);
+}
+const RATE={slow:.55, nat:1.0, fast:1.12};
+/* play an array of [who,text,trans] lines in order, highlighting as we go */
+function speakSeq(lines, i=0){
+  if(!("speechSynthesis" in window)||i>=lines.length)return;
+  document.querySelectorAll("#chat .msg").forEach((m,k)=>m.classList.toggle("cur",k===i));
+  const u=new SpeechSynthesisUtterance(lines[i][1]);u.lang=VOICE[target];u.rate=.92;
+  u.onend=()=>setTimeout(()=>speakSeq(lines,i+1),350);
+  if(i===0)speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+const PLATE=`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#d5d8de" stroke-width="2"/><circle cx="32" cy="32" r="20" fill="none" stroke="#d5d8de" stroke-width="1.5"/></svg>`;
+const SPK=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg>`;
+
+/* =========================================================
+   HOME
+   ========================================================= */
+function setTarget(l){
+  target=l;
+  document.querySelectorAll("#langSeg button").forEach(b=>b.classList.toggle("on",b.dataset.l===l));
+  document.documentElement.lang=native();
+  renderHome();
+}
+function renderLanding(){
+  const t=T();
+  $("#navCourse").textContent=t.nav;
+  $("#langSeg").dataset.label=native()==="es"?"Aprendo":"Learning";
+  $("#l-eyebrow").textContent=t.lEyebrow; $("#l-title").textContent=t.lTitle; $("#l-lead").textContent=t.lLead;
+  $("#l-cta").textContent=t.lCta; $("#l-free").textContent=t.lFree;
+  $("#l-howk").textContent=t.lHowk;
+  $("#l-how").innerHTML=t.lHow.map(([b,p],i)=>`<div><i>0${i+1}</i><b>${b}</b><p>${p}</p></div>`).join("");
+  $("#l-pathk").textContent=t.lPathk; $("#l-patht").textContent=t.lPatht;
+  $("#l-path").innerHTML=t.units.map(([n,d],i)=>`<li><em>U${i+1}</em><div><b>${n}</b><br><span>${d}</span></div></li>`).join("");
+  $("#l-twok").textContent=t.lTwok; $("#l-twot").textContent=t.lTwot; $("#l-twol").textContent=t.lTwol;
+  $("#l-pa").textContent=t.lPa; $("#l-pb").textContent=t.lPb;
+  $("#brandFoot").textContent=$("#brandName").textContent; $("#l-foot").textContent=t.lFoot;
+}
+function renderHome(){
+  const t=T(); renderLanding();
+  $("#h-eyebrow").textContent=t.eyebrow; $("#h-title").textContent=t.title; $("#h-lead").textContent=t.lead;
+  $("#h-m1").textContent=t.m1; $("#h-m2").textContent=t.m2; $("#h-m3").textContent=t.m3;
+  const tx=xpTotal(); $("#h-xpwrap").classList.toggle("hide",tx<=0); $("#h-xp").textContent=tx;
+  const u=$("#units"); u.innerHTML="";
+  const O=native();
+  LEVELS.forEach(lv=>{
+    const h=document.createElement("div"); h.className="lvl-h"; h.textContent=lv.t[O]; u.appendChild(h);
+    lv.units.forEach(un=>{
+      const built=un.lessons.length;
+      const el=document.createElement("section"); el.className="unit"+(built?"":" soon");
+      let body=un.lessons.map(Ls=>{
+        const hasMission=Array.isArray(LESSON_STEPS[Ls.id])&&LESSON_STEPS[Ls.id].some(x=>x.type==="mission");
+        return `<button class="lesson" onclick="startLesson('${Ls.id}')">
+        <span class="st"></span>
+        <span><span class="t">${Ls.id} · ${LESSON_TITLES[O][Ls.id]}</span><br><span class="d">${hasMission?`<b style="color:var(--accent);font-weight:600">${t.kMission}</b> · `:""}${stepCount(Ls.id)} ${t.exercises}</span></span>
+        <span class="go">${t.go} →</span>
+      </button>`;}).join("");
+      const rest=un.total-built;
+      if(rest>0) body+=`<div class="lesson ghost"><span class="st dash"></span><span><span class="t" style="font-weight:500;color:var(--muted)">${built?t.moreLessons(rest):t.lockedUnit}</span></span><span class="go" style="color:var(--muted2)">${t.soon}</span></div>`;
+      el.innerHTML=`<div class="unit-h"><div class="n">${un.n}</div><div><h2>${un.t[O][0]}</h2><p>${un.t[O][1]}</p></div></div>${body}`;
+      u.appendChild(el);
+    });
+  });
+}
+document.querySelectorAll("#langSeg button").forEach(b=>b.onclick=()=>setTarget(b.dataset.l));
+
+/* =========================================================
+   LESSON  — build a sequence of exercise steps
+   ========================================================= */
+function startLesson(id){
+  currentLesson=id;
+  const S=LESSON_STEPS[id];
+  if(SIT[id]&&SIT[id][target]&&SIT[id][target].scene){
+    steps=LOOP_STEPS();
+  } else if(S==="numbers"){
+    const pick=()=>Math.floor(Math.random()*10);
+    steps=[{type:"learn"},{type:"plates",n:pick()},{type:"listen",n:pick()},{type:"match"},{type:"type",n:pick()},{type:"sentence",n:pick()},{type:"plates",n:pick()},{type:"summary"}];
+  } else steps=S.map(s=>({...s}));
+  idx=0; results=[]; lessonXP=0;
+  $("#landing").classList.add("hide"); $("#home").classList.add("hide"); $("#lesson").classList.remove("hide"); document.body.classList.add("in-lesson");
+  window.scrollTo(0,0);
+  render();
+}
+function goHome(){ if(timerId){clearInterval(timerId);timerId=null;} $("#landing").classList.add("hide"); $("#lesson").classList.add("hide"); $("#home").classList.remove("hide"); document.body.classList.remove("in-lesson"); window.scrollTo(0,0); if(window.speechSynthesis)speechSynthesis.cancel(); }
+function goLanding(){ if(timerId){clearInterval(timerId);timerId=null;} $("#home").classList.add("hide"); $("#lesson").classList.add("hide"); $("#landing").classList.remove("hide"); document.body.classList.remove("in-lesson"); window.scrollTo(0,0); if(window.speechSynthesis)speechSynthesis.cancel(); }
+
+function setBar(state, title, text, btn, fn, disabled){
+  const bar=$("#bar"); bar.className="bar"+(state?" "+state:"");
+  $("#fb").innerHTML=title?`<b>${title}</b>${text?`<span>${text}</span>`:""}`:"";
+  const p=$("#primary"); p.textContent=btn; p.onclick=fn; p.disabled=!!disabled; p.className="btn";
+}
+function disablePrimary(){ $("#primary").disabled=true; }
+
+function render(){
+  const t=T(), s=steps[idx], total=steps.length-1; // summary not counted
+  picked=null; locked=false;
+  $("#progFill").style.width=(idx/total*100)+"%";
+  $("#stepLabel").textContent=s.type==="summary"?"":t.stepOf(idx+1,total);
+  const sc=$("#screen"); sc.className="screen"; void sc.offsetWidth; // restart anim
+  $("#primary").classList.remove("hide"); if(timerId){clearInterval(timerId);timerId=null;}
+  const L=target, O=native();
+  const n=k=>NUM[L][k], o=k=>NUM[O][k];
+  const SD=SIT[currentLesson]&&SIT[currentLesson][L];
+
+  /* ---- lesson loop: WATCH (scene) ---- */
+  if(s.type==="scene"){
+    const d=SD.scene;
+    sc.innerHTML=`<div class="kicker">${t.kScene}</div><div class="q">${LESSON_TITLES[O][currentLesson]}</div>
+      <div class="chat" id="chat">${d.map(([w,l,tr])=>`<div class="msg ${w==="Y"?"me":"them"}"><span class="who">${w==="Y"?t.whoY:w==="C"?t.whoC:t.whoM}</span>${l}<span class="tr sub">${tr}</span></div>`).join("")}</div>
+      <div class="scene-ctl">
+        <button class="sbtn" onclick="speakSeq(SIT[currentLesson][target].scene)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>${t.replay}</button>
+        <button class="sbtn" id="subT" onclick="document.querySelector('#chat').classList.toggle('subs');this.classList.toggle('on')">${t.subs}</button>
+      </div>
+      <p class="hint">${t.sceneHint}</p>`;
+    setTimeout(()=>speakSeq(d),450);
+    setBar("", "", "", t.next+" →", ()=>advance(null));
+  }
+
+  /* ---- LEARN (key phrases w/ slow + natural audio) ---- */
+  if(s.type==="chunks"){
+    const d=SD.chunks;
+    window.chunkSay=(i,m)=>{const c=SIT[currentLesson][target].chunks[i]; speak(c[0],target,m==="slow"?RATE.slow:RATE.nat);};
+    sc.innerHTML=`<div class="kicker">${t.kChunks}</div><div class="q">${LESSON_TITLES[O][currentLesson]}</div>
+      <div class="chunks">${d.map((c,i)=>`<div class="chunkrow"><button class="ctxt" onclick="chunkSay(${i},'nat')"><b>${c[0]}</b><span>${c[1]}</span></button><span class="spd"><button onclick="chunkSay(${i},'slow')">${t.slow}</button><button onclick="chunkSay(${i},'nat')">${t.fast}</button></span></div>`).join("")}</div>
+      <p class="hint">${t.chunkHint}</p>`;
+    setBar("", "", "", t.practice+" →", ()=>advance(null));
+  }
+
+  /* ---- LISTEN / UNDERSTAND (hear a phrase, answer) ---- */
+  if(s.type==="hp"||s.type==="hpx"){
+    const d=s.type==="hp"?SD.hp[s.i]:s.d[L];
+    s.n=d.ans;
+    window.hpSay=f=>speak(d.a,target,f?(d.fast?RATE.fast:RATE.nat):RATE.slow);
+    sc.innerHTML=`<div class="kicker">${s.type==="hpx"?t.kReview:(s.i===0?t.kListenP:t.kUnder)}</div><div class="q sm">${d.q}</div>
+      <div class="hearbar"><button class="play lg" onclick="hpSay(1)">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button><span class="spd"><button onclick="hpSay(0)">${t.slow}</button><button onclick="hpSay(1)">${t.fast}</button></span></div>
+      <div class="opts one">${d.opts.map((op,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)"><span class="k">${i+1}</span>${op}</button>`).join("")}</div>`;
+    setTimeout(()=>hpSay(1),400);
+    setBar("", "", "", t.check, ()=>grade(picked===d.ans, d.a, d.opts[d.ans]));
+    disablePrimary();
+  }
+
+  /* ---- SPEAK (hear the manager, answer out loud) ---- */
+  if(s.type==="say"){
+    const d=SD.say;
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    window.saySay=f=>speak(d.p[0],target,f?(d.fast?RATE.fast:RATE.nat):RATE.slow);
+    sc.innerHTML=`<div class="kicker">${t.kSay}</div><div class="q sm">${t.sayHint}</div>
+      <div class="panel">
+        <div class="eyebrow" style="margin-bottom:6px">${t.managerSays}</div>
+        <div class="sayline"><button class="play" onclick="saySay(1)">${SPK}</button><b>${d.p[0]}</b></div>
+        <span class="muted">${d.p[1]}</span><span class="spd" style="margin-left:10px"><button onclick="saySay(0)">${t.slow}</button><button onclick="saySay(1)">${t.fast}</button></span>
+        <div class="divider"></div>
+        <div class="eyebrow" style="margin-bottom:6px">${t.yourReply}</div>
+        <div style="font-size:20px;font-weight:600;letter-spacing:-.01em">${d.r[0]} <button class="play" onclick="speak(SIT[currentLesson][target].say.r[0],target,RATE.slow)" style="width:32px;height:32px">${SPK.replace('width="20" height="20"','width="15" height="15"')}</button></div>
+        <span class="muted">${d.r[1]}</span>
+      </div>
+      ${SR?`<button class="mic" id="mic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></button><div class="heard" id="heard"></div><p class="muted" style="text-align:center" id="mhint">${t.tapMic}</p>`
+          :`<p class="muted" style="margin-bottom:10px">${t.noSR}</p><input class="field" id="sp" autocomplete="off" placeholder="…">`}`;
+    setTimeout(()=>saySay(1),400);
+    const sayDone=ok=>{
+      results.push({ok, word:d.r[0], other:d.r[1]});
+      if(ok)award(15);
+      setBar(ok?"ok":"err", ok?`${t.correct} · +15 XP`:`${t.incorrect} ${d.r[0]}`, d.r[1], t.next, ()=>{idx++;render();window.scrollTo(0,0);});
+    };
+    const normSay=x=>strip(x).replace(/['''`-]/g,"").replace(/\s+/g," ").trim();
+    const matches=x=>{const v=normSay(x); return v===normSay(d.r[0])||d.ok.some(k=>v===normSay(k)||v.includes(normSay(k)));};
+    if(SR){
+      const rec=new SR(); rec.lang=VOICE[target]; rec.interimResults=false; rec.maxAlternatives=4;
+      $("#mic").onclick=()=>{ speechSynthesis.cancel(); $("#mic").classList.add("live"); $("#heard").textContent=""; try{rec.start();}catch(e){} };
+      rec.onresult=ev=>{ const alts=[...ev.results[0]].map(r=>r.transcript); $("#heard").textContent=`“${alts[0]}”`; const ok=alts.some(matches); sayDone(ok); if(!ok)$("#mhint").textContent=t.tryAgain; };
+      rec.onend=()=>$("#mic").classList.remove("live");
+      rec.onerror=()=>{ $("#mic").classList.remove("live"); $("#heard").textContent=t.heardNone; };
+      setBar("", "", "", t.skip, ()=>advance(null));
+    }else{
+      const f=$("#sp"); f.oninput=()=>$("#primary").disabled=!f.value.trim();
+      setBar("", "", "", t.check, ()=>{ const ok=matches(f.value); f.classList.add(ok?"ok":"err"); f.disabled=true; sayDone(ok); }, true);
+    }
+  }
+
+  /* ---- FILL THE BLANK ---- */
+  if(s.type==="fillx"){
+    const d=SD.fill; s.n=d.ans;
+    sc.innerHTML=`<div class="kicker">${t.kFill}</div><div class="q sm">${t.kFill}</div>
+      <div class="vocab"><div class="word" style="font-size:24px;line-height:1.3">${d.s.replace("___","<span class='blank'>_____</span>")}</div><div class="tr">${d.tr}</div></div>
+      <div class="opts two">${d.opts.map((op,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)"><span class="k">${i+1}</span>${op}</button>`).join("")}</div>`;
+    setBar("", "", "", t.check, ()=>{
+      const full=d.s.replace("___",d.opts[d.ans]);
+      grade(picked===d.ans, full, d.tr);
+    });
+    disablePrimary();
+  }
+
+  /* ---- BUILD THE SENTENCE (reuses the word-tile game) ---- */
+  if(s.type==="bld"){ R.order(SD.bld, t, sc); }
+
+  /* ---- TRUE / FALSE ---- */
+  if(s.type==="tf"){
+    const d=SD.tf; s.n=d.truth?0:1;
+    sc.innerHTML=`<div class="kicker">${t.kTF}</div><div class="q sm">${t.kTF}</div>
+      <div class="vocab"><div class="word" style="font-size:22px;line-height:1.35">${d.s}</div></div>
+      <div class="opts two">${[t.tTrue,t.tFalse].map((op,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)" style="justify-content:center"><span class="k">${i+1}</span>${op}</button>`).join("")}</div>`;
+    setBar("", "", "", t.check, ()=>grade(picked===s.n, d.truth?t.tTrue:t.tFalse, d.s, null, true));
+    disablePrimary();
+  }
+
+  /* ---- TAP THE OBJECT ---- */
+  if(s.type==="tapimg"){
+    const d=SD.tapimg[s.i]; s.n=d.ans;
+    sc.innerHTML=`<div class="kicker">${t.kTap}</div><div class="q sm">${d.q}</div>
+      <div class="hearbar"><button class="play lg" onclick="speak(steps[idx].word,target)">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button></div>
+      <div class="opts two imgopts">${d.icons.map((ic,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)">${objIcon(ic,40)}</button>`).join("")}</div>`;
+    s.word=d.word;
+    setTimeout(()=>speak(d.word,target),400);
+    setBar("", "", "", t.check, ()=>grade(picked===d.ans, d.word, d.q));
+    disablePrimary();
+  }
+
+  /* ---- WHAT'S MISSING? ---- */
+  if(s.type==="missing"){
+    const d=SD.missing; s.n=d.ans;
+    sc.innerHTML=`<div class="kicker">${t.kMissing}</div><div class="q sm">${d.q}</div>
+      <div class="panel tableset">
+        ${d.setup.map(ic=>`<span class="obj">${objIcon(ic,34)}</span>`).join("")}
+        ${Array.from({length:d.miss},()=>`<span class="obj miss"></span>`).join("")}
+      </div>
+      <div class="opts two">${d.opts.map((op,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)"><span class="k">${i+1}</span>${op}</button>`).join("")}</div>`;
+    setBar("", "", "", t.check, ()=>grade(picked===d.ans, d.word, d.q));
+    disablePrimary();
+  }
+
+  /* ---- MISSION (boss battle: lives + XP + mixed rounds) ---- */
+  if(s.type==="mission"){
+    const d=s.d[L];
+    s.mi=0; s.hearts=3; s.mxp=0; s.attempts=0; s.errors=0; s.rounds=d.rounds;
+    sc.innerHTML=`<div class="kicker">${t.kMission}</div><div class="q">${d.name}</div>
+      <div class="mstat"><span class="lives" id="mlives"></span><span class="mxpc" id="mxpc">0 XP</span></div>
+      <p class="hint" style="margin:0 0 14px">${t.missionHint}</p>
+      <div id="mzone"></div>`;
+    setBar("", "", "", t.check, null, true); $("#primary").classList.add("hide");
+    missionHUD(); missionRound();
+  }
+
+  /* ---- ROLE PLAY (branching; rescue phrases always continue) ---- */
+  if(s.type==="rp"||s.type==="rpx"){
+    s.nodes=s.type==="rp"?SD.rp:s.d[L]; s.ni=0;
+    sc.innerHTML=`<div class="kicker">${t.kRole}</div><div class="q sm">${t.roleHint}</div>
+      <div class="chat subs" id="chat"></div><div class="opts" id="dopts" style="margin-top:14px"></div>`;
+    setBar("", "", "", t.check, null, true); $("#primary").classList.add("hide");
+    rpNode();
+  }
+
+  if(s.type==="vocab"){
+    const V=VOCAB[s.set][L];
+    sc.innerHTML=`<div class="kicker">${t.kVocab}</div><div class="q">${LESSON_TITLES[O][currentLesson]}</div>
+      <div class="vocab" id="vcard"></div>
+      <div class="grid3">${V.map((w,i)=>`<button class="chip" onclick="showVocab('${s.set}',${i})"><b>${w[0]}</b><span>${w[1]}</span></button>`).join("")}</div>`;
+    showVocab(s.set,0);
+    setBar("", "", "", t.practice+" →", ()=>advance(null));
+  }
+
+  if(s.type==="pick"){
+    const V=VOCAB[s.set][L]; const k=Math.floor(Math.random()*V.length); s.n=k;
+    const set=new Set([k]); while(set.size<4)set.add(Math.floor(Math.random()*V.length));
+    const opts=shuffle([...set]);
+    sc.innerHTML=`<div class="kicker">${t.kVocab}</div><div class="q">${t.qPick}</div>
+      <div class="vocab" style="padding:18px 22px"><div class="word" style="font-size:28px">${V[k][1]}</div></div>
+      <div class="opts two">${opts.map((j,i)=>`<button class="opt" data-k="${j}" onclick="choose(${j},this)"><span class="k">${i+1}</span>${V[j][0]}</button>`).join("")}</div>`;
+    setBar("", "", "", t.check, ()=>grade(picked===k, V[k][0], V[k][1])); disablePrimary();
+  }
+
+  if(s.type==="lib"){
+    const e=EX.find(x=>x.id===s.id);
+    R[s.id](s.data?s.data[L]:e.data[L], t, sc);
+  }
+
+  if(s.type==="learn"){
+    sc.innerHTML=`<div class="kicker">${t.kLearn}</div><div class="q">${t.qLearn}</div>
+      <div class="vocab" id="vcard"></div>
+      <div class="grid3">${NUM[L].map((w,i)=>`<button class="chip" onclick="showWord(${i})"><b>${w}</b><span>${o(i)}</span></button>`).join("")}</div>`;
+    showWord(0);
+    setBar("", "", "", t.practice+" →", ()=>advance(null));
+  }
+
+  if(s.type==="plates"){
+    const opts=shuffle(distractors(s.n));
+    sc.innerHTML=`<div class="kicker">${t.kPlates}</div><div class="q">${t.qPlates}</div>
+      <div class="plates">${Array.from({length:s.n+1},(_,i)=>PLATE.replace("<svg",`<svg style="animation-delay:${i*40}ms"`)).join("")}</div>
+      <div class="opts two">${opts.map((k,i)=>`<button class="opt" data-k="${k}" onclick="choose(${k},this)"><span class="k">${i+1}</span>${n(k)}</button>`).join("")}</div>`;
+    setBar("", "", "", t.check, ()=>grade(picked===s.n, n(s.n), o(s.n))); disablePrimary();
+  }
+
+  if(s.type==="listen"){
+    const opts=shuffle(distractors(s.n));
+    sc.innerHTML=`<div class="kicker">${t.kListen}</div><div class="q">${t.qListen}</div>
+      <div style="display:flex;justify-content:center;margin-bottom:24px"><button class="play" style="width:72px;height:72px" onclick="speak('${n(s.n)}')">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button></div>
+      <div class="opts two">${opts.map((k,i)=>`<button class="opt" data-k="${k}" onclick="choose(${k},this)"><span class="k">${i+1}</span>${n(k)}</button>`).join("")}</div>`;
+    setTimeout(()=>speak(n(s.n)),350);
+    setBar("", "", "", t.check, ()=>grade(picked===s.n, n(s.n), o(s.n))); disablePrimary();
+  }
+
+  if(s.type==="type"){
+    sc.innerHTML=`<div class="kicker">${t.kType}</div><div class="q">${t.qType}</div>
+      <div class="vocab" style="padding:18px 22px"><div class="word" style="font-size:32px">${s.n+1}<span style="font-size:18px;color:var(--ink-3);font-weight:500">· ${o(s.n)}</span></div></div>
+      <input class="field" id="typed" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="…">
+      <div class="hint">${t.typeHint}</div>`;
+    const f=$("#typed"); f.oninput=()=>{ $("#primary").disabled=!f.value.trim(); };
+    f.onkeydown=e=>{ if(e.key==="Enter"&&!$("#primary").disabled)$("#primary").click(); };
+    setTimeout(()=>f.focus(),100);
+    setBar("", "", "", t.check, ()=>{
+      const ok=strip(f.value)===strip(n(s.n));
+      f.classList.add(ok?"ok":"err"); f.disabled=true;
+      grade(ok, n(s.n), o(s.n));
+    }); disablePrimary();
+  }
+
+  if(s.type==="match"){
+    const ks=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,5);
+    const left=shuffle(ks), right=shuffle(ks);
+    sc.innerHTML=`<div class="kicker">${t.kMatch}</div><div class="q">${t.qMatch}</div>
+      <div class="match">
+        <div class="opts">${left.map(k=>`<button class="opt" data-side="a" data-k="${k}" onclick="matchPick(this)">${n(k)}</button>`).join("")}</div>
+        <div class="opts">${right.map(k=>`<button class="opt" data-side="b" data-k="${k}" onclick="matchPick(this)">${o(k)}</button>`).join("")}</div>
+      </div>`;
+    s.remaining=5; s.misses=0; s.first=null;
+    setBar("", "", "", t.next, ()=>advance(s.misses===0)); disablePrimary();
+  }
+
+  if(s.type==="sentence"){
+    const [sent, trans]=EXAMPLES[L][s.n];
+    const word=n(s.n);
+    const blanked=sent.replace(new RegExp(word,"i"),"_____");
+    const opts=shuffle(distractors(s.n));
+    sc.innerHTML=`<div class="kicker">${t.kSentence}</div><div class="q sm">${t.qSentence}</div>
+      <div class="vocab"><div class="word" style="font-size:24px;line-height:1.3">${blanked}</div><div class="tr">${trans}</div></div>
+      <div class="opts two">${opts.map((k,i)=>`<button class="opt" data-k="${k}" onclick="choose(${k},this)"><span class="k">${i+1}</span>${n(k)}</button>`).join("")}</div>`;
+    setBar("", "", "", t.check, ()=>grade(picked===s.n, n(s.n), o(s.n), sent)); disablePrimary();
+  }
+
+  if(s.type==="summary"){
+    $("#progFill").style.width="100%";
+    const graded=results.filter(r=>r!==null), right=graded.filter(r=>r.ok).length, pct=Math.round(right/graded.length*100);
+    const missed=graded.filter(r=>!r.ok);
+    const C=2*Math.PI*52;
+    sc.innerHTML=`<div class="sum">
+      <div class="ring"><svg width="120" height="120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="10"/><circle cx="60" cy="60" r="52" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}" style="transition:stroke-dashoffset 1s ease"/></svg><b>${pct}%</b></div>
+      <div class="eyebrow" style="color:var(--accent);margin-bottom:6px">${t.skillUnlocked}</div>
+      <h2>${(SKILLS[native()]&&SKILLS[native()][currentLesson])||t.sumTitle}</h2><p>${LESSON_TITLES[native()][currentLesson]}</p>
+      <div class="rows">
+        <div><span>${t.acc}</span><b>${right} / ${graded.length}</b></div>
+        <div><span>${t.xpEarned}</span><b>+${lessonXP}</b></div>
+        ${missed.length?missed.map(m=>`<div class="miss"><span>${t.missed}</span><b>${[m.word,m.other].filter(Boolean).join(" · ")||"—"}</b></div>`).join(""):`<div><span>${t.missed}</span><b>${t.none}</b></div>`}
+      </div></div>`;
+    if(!s.xpDone){ xpSave(lessonXP); s.xpDone=true; }
+    setBar("", "", "", t.back, goHome);
+  }
+}
+
+function distractors(n){
+  const set=new Set([n]);
+  while(set.size<4){const d=n+Math.floor(Math.random()*7)-3; if(d>=0&&d<=9)set.add(d);}
+  return [...set];
+}
+function showVocab(set,i){
+  const V=VOCAB[set][target][i];
+  $("#vcard").innerHTML=`<div class="word" style="font-size:32px">${V[0]}<button class="play" data-say="${V[0]}" onclick="speak(this.dataset.say)">${SPK}</button></div><div class="tr">${V[1]}</div><div class="ex"><b>${V[2]}</b><span>${V[3]}</span></div>`;
+  speak(V[0]);
+}
+function showWord(i){
+  const L=target, O=native(), [ex,tr]=EXAMPLES[L][i];
+  $("#vcard").innerHTML=`<div class="word">${NUM[L][i]}<button class="play" onclick="speak('${NUM[L][i]}')">${SPK}</button></div>
+    <div class="tr">${NUM[O][i]}</div>
+    <div class="ex"><b>${ex}</b><span>${tr}</span></div>`;
+  speak(NUM[L][i]);
+}
+function choose(k,el){
+  if(locked)return; picked=k;
+  document.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel")); el.classList.add("sel");
+  $("#primary").disabled=false;
+}
+function matchPick(el){
+  const s=steps[idx];
+  if(!s.first){ s.first=el; el.classList.add("sel"); return; }
+  if(s.first===el){ el.classList.remove("sel"); s.first=null; return; }
+  if(s.first.dataset.side===el.dataset.side){ s.first.classList.remove("sel"); s.first=el; el.classList.add("sel"); return; }
+  const ok=s.first.dataset.k===el.dataset.k;
+  const a=s.first; s.first=null;
+  if(ok){
+    [a,el].forEach(x=>{x.classList.remove("sel");x.classList.add("ok");setTimeout(()=>{x.classList.remove("ok");x.classList.add("gone");},350);});
+    speak(NUM[target][+el.dataset.k]);
+    if(--s.remaining===0){ $("#primary").disabled=false; }
+  }else{
+    s.misses++;
+    [a,el].forEach(x=>{x.classList.remove("sel");x.classList.add("err");setTimeout(()=>x.classList.remove("err"),450);});
+  }
+}
+function grade(ok, word, other, sentence, quiet){
+  const t=T(); locked=true;
+  document.querySelectorAll(".opt").forEach(b=>{
+    b.disabled=true;
+    if(+b.dataset.k===steps[idx].n)b.classList.add("ok"); else if(b.classList.contains("sel"))b.classList.add("err");
+    b.classList.remove("sel");
+  });
+  results.push({ok, word, other});
+  if(ok)award(10);
+  if(!quiet)speak(word);
+  setBar(ok?"ok":"err", ok?`${t.correct} · +10 XP`:`${t.incorrect} ${word}`, sentence?sentence:`${word} · ${other}`, t.next, ()=>{idx++;render();window.scrollTo(0,0);});
+}
+function advance(ok){
+  if(ok!==null&&ok!==undefined){ results.push(ok?{ok:true,word:"",other:""}:{ok:false,word:T().kMatch,other:""}); if(ok)award(10); }
+  idx++; render(); window.scrollTo(0,0);
+}
+
+
+/* ---------- mission engine ---------- */
+function missionHUD(){
+  const s=steps[idx];
+  $("#mlives").innerHTML=Array.from({length:3},(_,i)=>`<i class="${i<s.hearts?"on":""}"></i>`).join("");
+  $("#mxpc").textContent=`${s.mxp} XP`;
+}
+function missionRound(){
+  const s=steps[idx], t=T(), r=s.rounds[s.mi];
+  const z=$("#mzone");
+  window.mSay=f=>speak(r.a,target,f?RATE.nat:RATE.slow);
+  if(r.k==="pick"||r.k==="first"){
+    z.innerHTML=`<div class="mq">${r.q}</div>
+      <div class="hearbar" style="margin:4px 0 16px"><button class="play lg" onclick="mSay(1)">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button><span class="spd"><button onclick="mSay(0)">${t.slow}</button><button onclick="mSay(1)">${t.fast}</button></span></div>
+      <div class="opts one">${r.opts.map((op,i)=>`<button class="opt" onclick="missionAnswer(${i})"><span class="k">${i+1}</span>${op}</button>`).join("")}</div>`;
+  }else{ // tap sequence
+    s.pos=0;
+    z.innerHTML=`<div class="mq">${r.q}</div>
+      <div class="hearbar" style="margin:4px 0 16px"><button class="play lg" onclick="mSay(1)">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button><span class="spd"><button onclick="mSay(0)">${t.slow}</button><button onclick="mSay(1)">${t.fast}</button></span></div>
+      <div class="opts two imgopts">${r.board.map(([ic,label],i)=>`<button class="opt mtile" id="mt${i}" onclick="missionTap(${i})" style="flex-direction:column;gap:6px">${objIcon(ic,34)}<span style="font-size:13px;font-weight:600">${label}</span></button>`).join("")}</div>
+      <p class="muted" style="text-align:center;margin-top:10px" id="mprog">${s.pos} / ${r.seq.length}</p>`;
+  }
+  setTimeout(()=>speak(r.a,target,RATE.nat),400);
+}
+function missionAnswer(i){
+  const s=steps[idx], t=T(), r=s.rounds[s.mi];
+  s.attempts++;
+  const opts=[...document.querySelectorAll("#mzone .opt")];
+  opts.forEach(b=>b.disabled=true);
+  if(i===r.ans){ opts[i].classList.add("ok"); s.mxp+=r.xp; missionHUD(); setTimeout(missionNext,650); }
+  else{ s.errors++; s.hearts--; opts[i].classList.add("err"); opts[r.ans].classList.add("ok"); missionHUD();
+        setTimeout(()=>{ if(s.hearts<=0)missionFail(); else missionNext(); },1100); }
+}
+function missionTap(i){
+  const s=steps[idx], r=s.rounds[s.mi], el=$("#mt"+i);
+  s.attempts++;
+  if(i===r.seq[s.pos]){
+    s.pos++; el.classList.add("ok"); setTimeout(()=>el.classList.remove("ok"),350);
+    $("#mprog").textContent=`${s.pos} / ${r.seq.length}`;
+    if(s.pos>=r.seq.length){ s.mxp+=r.xp; missionHUD(); setTimeout(missionNext,650); }
+  }else{
+    s.errors++; s.hearts--; el.classList.add("err"); missionHUD();
+    setTimeout(()=>{ el.classList.remove("err"); if(s.hearts<=0)missionFail(); },600);
+  }
+}
+function missionNext(){
+  const s=steps[idx];
+  s.mi++;
+  if(s.mi>=s.rounds.length)missionDone(); else missionRound();
+}
+function missionDone(){
+  const s=steps[idx], t=T();
+  const acc=s.attempts?Math.round((s.attempts-s.errors)/s.attempts*100):100;
+  lessonXP+=s.mxp;
+  results.push({ok:true, word:"", other:""});
+  $("#mzone").innerHTML=`<div class="panel" style="text-align:center;padding:28px 20px">
+    <div class="eyebrow" style="color:var(--accent);margin-bottom:8px">${t.shiftDone}</div>
+    <div style="font-size:30px;font-weight:600;letter-spacing:-.02em">${s.mxp} XP</div>
+    <p class="muted" style="margin-top:4px">${t.acc}: ${acc}%</p></div>`;
+  $("#primary").classList.remove("hide");
+  setBar("ok", t.shiftDone, `+${s.mxp} XP`, t.next, ()=>{idx++;render();window.scrollTo(0,0);});
+}
+function missionFail(){
+  const s=steps[idx], t=T();
+  $("#mzone").innerHTML=`<div class="panel" style="text-align:center;padding:28px 20px">
+    <div class="eyebrow" style="color:var(--err);margin-bottom:8px">${t.outOfLives}</div>
+    <p class="muted" style="margin:4px 0 16px">${t.missionHint}</p>
+    <button class="btn" onclick="render()">${t.retry}</button></div>`;
+}
+
+/* ---------- role play engine ---------- */
+function rpNode(){
+  const s=steps[idx], t=T(), node=s.nodes[s.ni];
+  $("#chat").insertAdjacentHTML("beforeend",`<div class="msg them"><span class="who">${node.w==="C"?t.whoC:t.whoM}</span>${node.m[0]}<span class="tr sub">${node.m[1]}</span></div>`);
+  speak(node.m[0],target,RATE.nat);
+  $("#dopts").innerHTML=node.o.map((o,j)=>`<button class="opt" data-j="${j}" onclick="rpPick(${j})"><span class="k">${j+1}</span><span>${o[0]}<br><span class="muted" style="font-size:13px">${o[1]}</span></span></button>`).join("");
+  window.scrollTo(0,document.body.scrollHeight);
+}
+function rpPick(j){
+  const s=steps[idx], t=T(), node=s.nodes[s.ni], o=node.o[j];
+  $("#chat").insertAdjacentHTML("beforeend",`<div class="msg me"><span class="who">${t.whoY}</span>${o[0]}<span class="tr sub">${o[1]}</span></div>`);
+  speak(o[0],target,RATE.nat);
+  $("#dopts").innerHTML="";
+  const rescueRepeat=o[2]==="r"&&o[3]===undefined;
+  setTimeout(()=>{
+    if(rescueRepeat){
+      $("#chat").insertAdjacentHTML("beforeend",`<div class="msg them slow"><span class="who">${node.w==="C"?t.whoC:t.whoM}</span>${node.m[0]}<span class="tr sub">${t.coach}</span></div>`);
+      speak(node.m[0],target,RATE.slow);
+      $("#dopts").innerHTML=node.o.map((oo,k)=>`<button class="opt" data-j="${k}" onclick="rpPick(${k})"><span class="k">${k+1}</span><span>${oo[0]}<br><span class="muted" style="font-size:13px">${oo[1]}</span></span></button>`).join("");
+      window.scrollTo(0,document.body.scrollHeight);
+      return;
+    }
+    const next=o[3]!==undefined?o[3]:s.ni+1;
+    if(next>=s.nodes.length){
+      results.push({ok:true, word:"", other:""});
+      award(20);
+      $("#primary").classList.remove("hide");
+      setBar("ok", `${t.correct} · +20 XP`, "", t.next, ()=>{idx++;render();window.scrollTo(0,0);});
+    }else{ s.ni=next; rpNode(); }
+  },1100);
+}
+
+/* ---------- library glue ---------- */
+const libChoose=(el,cb)=>{document.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel"));el.classList.add("sel");cb();};
+let timerId=null;
+function libFinish(ok,t,word,sub){
+  $("#primary").classList.remove("hide");
+  results.push({ok, word:word||"", other:sub||""});
+  if(ok)award(10);
+  setBar(ok?"ok":"err", ok?`${t.correct} · +10 XP`:`${t.incorrect} ${word}`, sub||"", t.next, nextStep);
+}
+function nextStep(){ if(timerId){clearInterval(timerId);timerId=null;} idx++; render(); window.scrollTo(0,0); }
+/* ============ renderers ============ */
+const R={};
+
+/* 1. word order */
+R.order=(d,t,sc)=>{
+  const words=d.sentence.replace(/[¿?]/g,"").split(" "), tiles=shuffle([...words,...d.extra]);
+  let placed=[];
+  sc.innerHTML=`<div class="kicker">${t.tap}</div><div class="q">${d.trans}</div>
+    <div class="slot" id="slot"></div><div class="tiles" id="tiles">${tiles.map((w,i)=>`<button class="tile" data-i="${i}" onclick="orderPick(${i})">${w}</button>`).join("")}</div><p class="muted">${t.tapHint}</p>`;
+  window.orderPick=i=>{ if(placed.includes(i))return; placed.push(i); draw(); };
+  function draw(){
+    $("#slot").innerHTML=placed.map(i=>`<button class="tile" onclick="orderUn(${i})">${tiles[i]}</button>`).join("");
+    document.querySelectorAll("#tiles .tile").forEach(b=>b.classList.toggle("used",placed.includes(+b.dataset.i)));
+    $("#primary").disabled=placed.length===0;
+  }
+  window.orderUn=i=>{ placed=placed.filter(x=>x!==i); draw(); };
+  setBar("", "", "", t.check, ()=>{
+    const ok=strip(placed.map(i=>tiles[i]).join(" "))===strip(d.sentence);
+    $("#slot").classList.add(ok?"ok":"err"); document.querySelectorAll(".tile").forEach(b=>b.onclick=null);
+    speak(d.sentence); libFinish(ok,t,d.sentence,d.trans);
+  }, true);
+};
+
+/* 2. ticket */
+R.ticket=(d,t,sc)=>{
+  let pick=null; const k=d.ticket;
+  sc.innerHTML=`<div class="kicker">${t.ticket}</div>
+    <div class="ticket"><div class="hd"><span>${k.tbl}</span><span>${k.cov}</span></div>${k.items.map(([n,i,m])=>`<div class="li"><span>${n} × ${i}</span></div><i class="li" style="display:block">${m?`<i>${m}</i>`:""}</i>`).join("")}<div class="ft">${k.ft}</div></div>
+    <div class="q" style="font-size:19px">${d.q}</div>
+    <div class="opts two">${d.opts.map((o,i)=>`<button class="opt" data-i="${i}"><span class="k">${i+1}</span>${o}</button>`).join("")}</div>`;
+  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>libChoose(b,()=>{pick=+b.dataset.i;$("#primary").disabled=false;}));
+  setBar("", "", "", t.check, ()=>{
+    document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;if(+b.dataset.i===d.ans)b.classList.add("ok");else if(+b.dataset.i===pick)b.classList.add("err");b.classList.remove("sel");});
+    libFinish(pick===d.ans,t,d.opts[d.ans]);
+  }, true);
+};
+
+/* 3. dialogue */
+R.dialogue=(d,t,sc)=>{
+  let i=0, pick=null, misses=0;
+  sc.innerHTML=`<div class="kicker">${t.dlg}</div><div class="chat" id="chat"></div><div class="opts" id="dopts"></div>`;
+  function step(){
+    const s=d.steps[i]; pick=null;
+    $("#chat").insertAdjacentHTML("beforeend",`<div class="msg them"><span class="who">${d.who}</span>${s.them[0]}<span class="tr">${s.them[1]}</span></div>`);
+    speak(s.them[0]);
+    $("#dopts").innerHTML=s.opts.map((o,j)=>`<button class="opt" data-i="${j}"><span class="k">${j+1}</span><span>${o[0]}<br><span class="muted" style="font-size:13px">${o[1]}</span></span></button>`).join("");
+    document.querySelectorAll("#dopts .opt").forEach(b=>b.onclick=()=>libChoose(b,()=>{pick=+b.dataset.i;$("#primary").disabled=false;}));
+    setBar("", "", "", t.check, ()=>{
+      const ok=pick===s.ans; if(!ok)misses++;
+      document.querySelectorAll("#dopts .opt").forEach(b=>{b.disabled=true;if(+b.dataset.i===s.ans)b.classList.add("ok");else if(+b.dataset.i===pick)b.classList.add("err");b.classList.remove("sel");});
+      $("#chat").insertAdjacentHTML("beforeend",`<div class="msg me"><span class="who">${d.me}</span>${s.opts[s.ans][0]}</div>`);
+      speak(s.opts[s.ans][0]);
+      const last=i===d.steps.length-1;
+      setBar(ok?"ok":"err", ok?t.correct:`${t.incorrect} ${s.opts[s.ans][0]}`, s.opts[s.ans][1], t.next, last?nextStep:()=>{i++;$("#dopts").innerHTML="";step();window.scrollTo(0,document.body.scrollHeight);});
+    }, true);
+  }
+  step();
+};
+
+/* 4. kitchen map — rooms labeled in the target language; prompt is the native word + audio */
+R.map=(d,t,sc)=>{
+  const order=shuffle(d.stations).slice(0,4); let i=0, hits=0;
+  const rooms=[[3,12,22,20],[29,12,22,20],[55,12,22,20],[81,12,16,20],[3,38,22,18],[29,38,22,18],[55,38,22,18],[81,38,16,18]];
+  sc.innerHTML=`<div class="kicker">${t.map}</div><div class="target" id="tgt"></div><p class="muted" style="text-align:center;margin-bottom:14px" id="tgtTr"></p>
+    <div class="map"><svg viewBox="0 0 100 60" id="floor"><rect width="100" height="60" fill="#f4f5f7"/>
+      <text x="50" y="7" font-size="3.2" fill="#8a919c" text-anchor="middle" font-family="Inter,sans-serif" letter-spacing=".4">BACK OF HOUSE</text>
+      ${d.stations.map((st,k)=>{const [x,y,w,h]=rooms[k];return `<g class="room" data-k="${k}" style="cursor:pointer"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1.5" fill="#fff" stroke="#d5d8de" stroke-width=".6"/><text x="${x+w/2}" y="${y+h/2+1.2}" font-size="${w<20?2.6:3}" font-weight="600" fill="#15181d" text-anchor="middle" font-family="Inter,sans-serif">${st[0]}</text></g>`}).join("")}
+    </svg></div>
+    <p class="muted" style="text-align:center" id="mapProg">1 / ${order.length}</p>`;
+  function ask(){ $("#tgt").textContent=order[i][1]; $("#tgtTr").innerHTML=`<button class="play" onclick="speak('${order[i][0]}')">${SPK}</button>`; speak(order[i][0]); $("#mapProg").textContent=`${i+1} / ${order.length}`; }
+  document.querySelectorAll(".room").forEach(g=>g.onclick=()=>{
+    if(i>=order.length)return;
+    const r=g.querySelector("rect"), ok=d.stations[+g.dataset.k][0]===order[i][0];
+    r.setAttribute("fill",ok?"#e6f4ec":"#fbecec"); r.setAttribute("stroke",ok?"#1f7a4d":"#b23a3a");
+    if(ok)hits++;
+    setTimeout(()=>{ if(!ok){r.setAttribute("fill","#fff");r.setAttribute("stroke","#d5d8de");} if(ok){ i++; if(i<order.length)ask(); else libFinish(hits===order.length,t,"",`${hits} / ${order.length}`); } },450);
+  });
+  ask(); setBar("", "", "", t.check, null, true); $("#primary").classList.add("hide");
+};
+
+/* 5. sequencing */
+R.seq=(d,t,sc)=>{
+  let cur=shuffle(d.steps.map((s,i)=>i)); if(cur.join()===d.steps.map((_,i)=>i).join())cur.reverse();
+  sc.innerHTML=`<div class="kicker">${t.seqq}</div><div class="seq" id="seq"></div>`;
+  function draw(){ $("#seq").innerHTML=cur.map((si,pos)=>`<div class="row" data-si="${si}"><em>${d.labels[pos]}</em><span>${d.steps[si]}</span><div class="mv"><button onclick="seqMove(${pos},-1)" ${pos===0?"disabled":""}>▲</button><button onclick="seqMove(${pos},1)" ${pos===cur.length-1?"disabled":""}>▼</button></div></div>`).join(""); }
+  window.seqMove=(pos,dir)=>{ const j=pos+dir; [cur[pos],cur[j]]=[cur[j],cur[pos]]; draw(); };
+  draw();
+  setBar("", "", "", t.check, ()=>{
+    let ok=true; document.querySelectorAll("#seq .row").forEach((r,pos)=>{const good=+r.dataset.si===pos; r.classList.add(good?"ok":"err"); if(!good)ok=false; r.querySelectorAll("button").forEach(b=>b.disabled=true);});
+    libFinish(ok,t,"",d.labels.map((l,i)=>`${l}: ${d.steps[i]}`).join(" · "));
+  });
+};
+
+/* 6. rapid fire */
+R.rapid=(d,t,sc)=>{
+  const q=shuffle(d.pairs); let i=0, score=0, tl=100;
+  sc.innerHTML=`<div class="kicker">${t.rapid}</div><div class="score"><span>${t.time}</span><span id="rs">0 / ${q.length}</span></div><div class="timer"><i id="tf"></i></div><div class="big-word" id="bw"></div><div class="opts two" id="ro"></div>`;
+  function ask(){
+    if(i>=q.length)return end();
+    tl=100; const cur=q[i], opts=shuffle([cur,...shuffle(d.pairs.filter(p=>p!==cur)).slice(0,3)]);
+    $("#bw").textContent=cur[0]; $("#bw").style.animation="none"; void $("#bw").offsetWidth; $("#bw").style.animation="";
+    $("#ro").innerHTML=opts.map(o=>`<button class="opt" style="justify-content:center">${o[1]}</button>`).join("");
+    document.querySelectorAll("#ro .opt").forEach(b=>b.onclick=()=>{ const ok=b.textContent===cur[1]; b.classList.add(ok?"ok":"err"); if(ok)score++; $("#rs").textContent=`${score} / ${q.length}`; setTimeout(()=>{i++;ask();},300); document.querySelectorAll("#ro .opt").forEach(x=>x.disabled=true); });
+    speak(cur[0]);
+  }
+  clearInterval(timerId);
+  timerId=setInterval(()=>{ tl-=100/30; $("#tf").style.width=Math.max(0,tl)+"%"; if(tl<=0){ i++; ask(); } },100);
+  function end(){ clearInterval(timerId); timerId=null; $("#bw").textContent=t.rapidDone(score,q.length); $("#ro").innerHTML=""; $("#tf").style.width="0"; libFinish(score>=q.length*0.75,t,"",`${t.scoreL}: ${score}`); }
+  ask(); setBar("", "", "", t.check, null, true);
+};
+
+/* 7. dictation */
+R.dict=(d,t,sc)=>{
+  sc.innerHTML=`<div class="kicker">${t.dict}</div><div style="display:flex;justify-content:center;margin:10px 0 22px"><button class="play lg" onclick="speak('${d.text}')">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button></div>
+    <input class="field" id="dt" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="…">`;
+  const f=$("#dt"); f.oninput=()=>$("#primary").disabled=!f.value.trim(); f.onkeydown=e=>{if(e.key==="Enter"&&!$("#primary").disabled)$("#primary").click();};
+  setTimeout(()=>speak(d.text),300);
+  setBar("", "", "", t.check, ()=>{ const ok=strip(f.value)===strip(d.text); f.classList.add(ok?"ok":"err"); f.disabled=true; libFinish(ok,t,d.text,d.trans); }, true);
+};
+
+/* 8. speaking */
+R.speak=(d,t,sc)=>{
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  sc.innerHTML=`<div class="kicker">${t.speak}</div><div class="panel" style="text-align:center"><div style="font-size:26px;font-weight:700;letter-spacing:-.02em">${d.text} <button class="play" onclick="speak('${d.text}')">${SPK}</button></div><p class="muted">${d.trans}</p></div>
+    ${SR?`<button class="mic" id="mic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></button><div class="heard" id="heard"></div><p class="muted" style="text-align:center" id="mhint">${t.tapMic}</p>`
+        :`<p class="muted" style="margin-bottom:10px">${t.noSR}</p><input class="field" id="sp" autocomplete="off" placeholder="…">`}`;
+  if(SR){
+    const rec=new SR(); rec.lang=VOICE[target]; rec.interimResults=false; rec.maxAlternatives=3;
+    $("#mic").onclick=()=>{ $("#mic").classList.add("live"); $("#heard").textContent=""; try{rec.start();}catch(e){} };
+    rec.onresult=ev=>{ const alts=[...ev.results[0]].map(r=>r.transcript); $("#heard").textContent=`“${alts[0]}”`; const ok=alts.some(a=>strip(a)===strip(d.text)); libFinish(ok,t,d.text,d.trans); if(!ok){$("#mhint").textContent=t.tryAgain;} };
+    rec.onend=()=>$("#mic").classList.remove("live");
+    rec.onerror=()=>{ $("#mic").classList.remove("live"); $("#heard").textContent=t.heardNone; };
+    setBar("", "", "", t.check, null, true); $("#primary").classList.add("hide");
+  }else{
+    const f=$("#sp"); f.oninput=()=>$("#primary").disabled=!f.value.trim();
+    setBar("", "", "", t.check, ()=>{ const ok=strip(f.value)===strip(d.text); f.classList.add(ok?"ok":"err"); f.disabled=true; libFinish(ok,t,d.text,d.trans); }, true);
+  }
+};
+
+/* 9. conjugation table */
+R.conj=(d,t,sc)=>{
+  sc.innerHTML=`<div class="kicker">${t.conjq}</div><div class="q">${d.verb}</div>
+    <table class="conj">${d.rows.map(([p,v,given],i)=>`<tr><td>${p}</td><td>${given?`<span class="given">${v}</span>`:`<input data-i="${i}" autocomplete="off" autocapitalize="off" spellcheck="false">`}</td></tr>`).join("")}</table>`;
+  const ins=[...document.querySelectorAll(".conj input")];
+  ins.forEach(f=>f.oninput=()=>$("#primary").disabled=!ins.every(x=>x.value.trim()));
+  setBar("", "", "", t.check, ()=>{
+    let ok=true; ins.forEach(f=>{ const good=strip(f.value)===strip(d.rows[+f.dataset.i][1]); f.classList.add(good?"ok":"err"); if(!good){ok=false;f.value=d.rows[+f.dataset.i][1];} f.disabled=true; });
+    libFinish(ok,t,"",d.rows.map(r=>`${r[0]} ${r[1]}`).join(" · "));
+  }, true);
+};
+
+/* keyboard shortcuts 1-4 on choice screens */
+document.addEventListener("keydown",e=>{
+  if($("#lesson").classList.contains("hide"))return;
+  const k=+e.key; if(k>=1&&k<=4){const b=document.querySelectorAll(".opts.two .opt, .opts.one .opt, #dopts .opt")[k-1]; if(b&&!b.disabled)b.click();}
+  if(e.key==="Enter"&&document.activeElement.tagName!=="INPUT"&&!$("#primary").disabled)$("#primary").click();
+});
+
+setTarget("en");
+</script>
+</body>
+</html>
