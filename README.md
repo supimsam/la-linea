@@ -2,7 +2,7 @@
 
 Bilingual (English ↔ Spanish) language course for restaurant coworkers. Game-based, task-first: rescue phrases, real kitchen audio at slow/natural speed, role plays where asking "can you say that again?" is always a valid move, XP, and shift-simulation missions.
 
-**Live: https://supimsam.github.io/la-linea/** (auto-deploys from `main` via GitHub Pages)
+**Live: https://la-linea-course.vercel.app** (Vercel, auto-deploys from `main`) · mirror: https://supimsam.github.io/la-linea/
 
 Open `demos/course.html` locally for the same thing. `demos/exercise-library.html` has the exercise types standalone.
 

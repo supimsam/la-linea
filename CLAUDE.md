@@ -84,10 +84,10 @@ Next up: progress persistence in `localStorage` (completed lessons, accuracy, cu
 
 ## Deployment (LIVE 2026-10-06)
 
-- GitHub repo **`supimsam/la-linea`** (public — required for free GitHub Pages; the HTML is view-source on any static host anyway). Push to `main` → Pages redeploys automatically (~30–60s).
-- **Live at https://supimsam.github.io/la-linea/** (root index.html redirects to `demos/course.html`).
-- Commit identity per-command: `git -c user.name="supimsam" -c user.email="11872348+supimsam@users.noreply.github.com" …`; gh CLI at `~/.local/bin/gh`.
-- If Sammi prefers her usual Vercel setup: import the repo at vercel.com/new (1 click, zero config — static site), then the repo could go private. Custom domain TBD — name candidates: Fuego Fluent, Sí Chef, La Línea (lalinea.com is taken).
+- **Primary: Vercel — https://la-linea-course.vercel.app** (alias; project `supimsams-projects/la-linea`, id `prj_3TAv3RtMxHs3K7pHHJfLveJUzWyf`). GitHub repo `supimsam/la-linea` is connected: **push to `main` → Vercel auto-deploys**. `la-linea.vercel.app` was taken by someone else, hence the `-course` alias. Deployment Protection (Vercel Authentication) was ON by default and got disabled via API — same gotcha as OTSP; don't re-enable.
+- Mirror: GitHub Pages at https://supimsam.github.io/la-linea/ (also auto-deploys from `main`). Repo is public (required for free Pages). If Sammi wants the repo private: flip it, Vercel keeps working, Pages dies — fine once Vercel is canonical.
+- Vercel CLI 62 installed globally via nvm (`vercel`), logged in as supimsam (device-code flow). Commit identity per-command: `git -c user.name="supimsam" -c user.email="11872348+supimsam@users.noreply.github.com" …`; gh CLI at `~/.local/bin/gh`.
+- Custom domain TBD — name candidates: Fuego Fluent, Sí Chef, La Línea (lalinea.com is taken). When bought: Vercel project → Settings → Domains (A record apex → 76.76.21.21, like ayatbushwick.menu).
 
 ## Roadmap after that
 
