@@ -922,10 +922,30 @@ const rnd=a=>a[Math.floor(Math.random()*a.length)];
 const shuffle=a=>[...a].sort(()=>Math.random()-.5);
 const strip=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
 
+/* robust TTS: prefer local voices (network voices can hang the queue), unlock iOS on first tap, resume() for Chrome's stuck-paused bug */
+const VPICK={en:null,es:null};
+function pickVoices(){
+  if(!("speechSynthesis" in window))return;
+  const vs=speechSynthesis.getVoices(); if(!vs.length)return;
+  const norm=v=>v.lang.replace("_","-").toLowerCase();
+  for(const k of ["en","es"]){
+    const want=VOICE[k].toLowerCase();
+    const exact=vs.filter(v=>norm(v).startsWith(want));
+    const loose=vs.filter(v=>norm(v).startsWith(k));
+    VPICK[k]=exact.find(v=>v.localService)||exact[0]||loose.find(v=>v.localService)||loose[0]||null;
+  }
+}
+if("speechSynthesis" in window){ pickVoices(); speechSynthesis.onvoiceschanged=pickVoices; }
+let ttsUnlocked=false;
+document.addEventListener("pointerdown",()=>{
+  if(ttsUnlocked||!("speechSynthesis" in window))return; ttsUnlocked=true;
+  const u=new SpeechSynthesisUtterance(" "); u.volume=0; speechSynthesis.speak(u);
+},true);
 function speak(word, lang=target, rate=.95){
   if(!("speechSynthesis" in window))return;
   const u=new SpeechSynthesisUtterance(word);u.lang=VOICE[lang];u.rate=rate;
-  speechSynthesis.cancel();speechSynthesis.speak(u);
+  if(VPICK[lang])u.voice=VPICK[lang];
+  speechSynthesis.cancel();speechSynthesis.speak(u);speechSynthesis.resume();
 }
 const RATE={slow:.55, nat:1.0, fast:1.12};
 /* play an array of [who,text,trans] lines in order, highlighting as we go */
@@ -933,9 +953,10 @@ function speakSeq(lines, i=0){
   if(!("speechSynthesis" in window)||i>=lines.length)return;
   document.querySelectorAll("#chat .msg").forEach((m,k)=>m.classList.toggle("cur",k===i));
   const u=new SpeechSynthesisUtterance(lines[i][1]);u.lang=VOICE[target];u.rate=.92;
+  if(VPICK[target])u.voice=VPICK[target];
   u.onend=()=>setTimeout(()=>speakSeq(lines,i+1),350);
   if(i===0)speechSynthesis.cancel();
-  speechSynthesis.speak(u);
+  speechSynthesis.speak(u);speechSynthesis.resume();
 }
 const PLATE=`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#d5d8de" stroke-width="2"/><circle cx="32" cy="32" r="20" fill="none" stroke="#d5d8de" stroke-width="1.5"/></svg>`;
 const SPK=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg>`;
@@ -1096,7 +1117,16 @@ function render(){
       $("#mic").onclick=()=>{ speechSynthesis.cancel(); $("#mic").classList.add("live"); $("#heard").textContent=""; try{rec.start();}catch(e){} };
       rec.onresult=ev=>{ const alts=[...ev.results[0]].map(r=>r.transcript); $("#heard").textContent=`“${alts[0]}”`; const ok=alts.some(matches); sayDone(ok); if(!ok)$("#mhint").textContent=t.tryAgain; };
       rec.onend=()=>$("#mic").classList.remove("live");
-      rec.onerror=()=>{ $("#mic").classList.remove("live"); $("#heard").textContent=t.heardNone; };
+      rec.onerror=ev=>{
+        $("#mic").classList.remove("live");
+        if(["not-allowed","service-not-allowed","audio-capture"].includes(ev.error)){
+          /* mic unavailable → swap to the typing fallback instead of a dead mic */
+          $("#mic").outerHTML=`<p class="muted" style="margin-bottom:10px">${t.noSR}</p><input class="field" id="sp" autocomplete="off" placeholder="…">`;
+          if($("#heard"))$("#heard").textContent=""; if($("#mhint"))$("#mhint").textContent="";
+          const f=$("#sp"); f.oninput=()=>$("#primary").disabled=!f.value.trim();
+          setBar("", "", "", t.check, ()=>{ const ok=matches(f.value); f.classList.add(ok?"ok":"err"); f.disabled=true; sayDone(ok); }, true);
+        } else { $("#heard").textContent=t.heardNone; }
+      };
       setBar("", "", "", t.skip, ()=>advance(null));
     }else{
       const f=$("#sp"); f.oninput=()=>$("#primary").disabled=!f.value.trim();
