@@ -1674,7 +1674,7 @@ setTarget("en");
 /* builder-mode toggle (bottom-left pill): English chrome + prompt glosses for authoring */
 function setBuilder(on){
   builder=on; try{localStorage.setItem("ll_builder",on?"1":"0")}catch(e){}
-  const b=$("#bmode"); b.textContent=on?"ES":"EN"; b.classList.toggle("on",on);
+  const b=$("#bmode"); b.textContent=on?"Español":"English"; b.classList.toggle("on",on);
   document.documentElement.lang=native();
   renderHome();
   if(document.body.classList.contains("in-lesson")){ if(window.speechSynthesis)speechSynthesis.cancel(); render(); }
