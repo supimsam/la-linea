@@ -320,6 +320,12 @@
   @keyframes s-pop{from{transform:scale(.985);opacity:.7}}
   @media(min-width:768px){.bar.ok{animation:none}}
 
+  /* builder mode (Sammi's English view) */
+  .btr{display:block;font-size:11.5px;font-weight:500;font-style:normal;color:var(--muted2);margin-top:1px;letter-spacing:0;text-transform:none}
+  .bmode{position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:45;height:30px;padding:0 12px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--card) 90%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--pill-shadow);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted)}
+  .bmode.on{background:var(--ink);color:var(--bg)}
+  body.in-lesson .bmode{bottom:calc(148px + env(safe-area-inset-bottom))}
+
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -388,6 +394,8 @@
   </div></div>
 </div>
 
+<button class="bmode" id="bmode" title="Builder: English view"></button>
+
 <script>
 /* =========================================================
    CONTENT  — direction: "en" = learner studies English (UI in Spanish)
@@ -441,14 +449,14 @@ const UI = {
        lTwok:"En los dos sentidos", lTwot:"Tus compañeros aprenden inglés. Tú aprendes español.", lTwol:"El mismo curso en ambas direcciones, para que puedan practicar juntos en el trabajo.",
        lPa:"Para quienes hablan inglés y quieren aprender español.", lPb:"Para quienes hablan español y quieren aprender inglés.",
        lFoot:"Hecho en una cocina, para cocinas." },
-  en:{ eyebrow:"Spanish course · Level A1", title:"Spanish for the kitchen", lead:"A structured Spanish course for people who work in restaurants. Real language fundamentals, with examples drawn from the daily work.",
+  en:{ eyebrow:"English course · Level A1", title:"English for the kitchen", lead:"A structured English course for people who work in restaurants. Real language fundamentals, with examples drawn from the daily work.",
        m1:"levels", m2:"lessons", m3:"per lesson",
        units:[["Level 1 · Survival","Rescue phrases, numbers, your restaurant, instructions"],["Level 2 · The team","Kitchen language, coworkers, schedules"],["Level 3 · Guests","Greeting, running food, serving tables"],["Paths","Pick your track: server or kitchen"]],
        lessons:[["Greetings & introductions","done"],["Numbers 1–10","cur"],["Days & schedules","todo"],["Survival phrases","todo"]],
        start:"Continue", review:"Review", done:"Completed",
        learn:"Learn", practice:"Practice", check:"Check", next:"Continue", finish:"Finish", skip:"Skip",
        kLearn:"Vocabulary", kPlates:"Comprehension", kListen:"Listening", kType:"Writing", kMatch:"Matching", kSentence:"In context",
-       qLearn:"Numbers 1–10", qPlates:"How many plates are there?", qListen:"Which number did you hear?", qType:"Type the number in Spanish", qMatch:"Match the pairs", qSentence:"Complete the sentence",
+       qLearn:"Numbers 1–10", qPlates:"How many plates are there?", qListen:"Which number did you hear?", qType:"Type the number in English", qMatch:"Match the pairs", qSentence:"Complete the sentence",
        typeHint:"Type the word, not the digit.",
        correct:"Correct", incorrect:"Correct answer:",
        sumTitle:"Lesson complete", sumSub:"Numbers 1–10", acc:"Accuracy", items:"Exercises", missed:"To review", back:"Back to course", none:"Nothing to review",
@@ -472,7 +480,7 @@ const UI = {
       tTrue:"True",tFalse:"False",
       skillUnlocked:"Skill unlocked",xpEarned:"XP earned",
       shiftDone:"Shift complete",outOfLives:"Out of lives",retry:"Try again",missionHint:"Three lives. Listen and answer fast.",
-       lEyebrow:"A course for coworkers · Free", lTitle:"Learn Spanish with the vocabulary of your own kitchen.", lLead:"Made for restaurant teams: the Spanish your kitchen actually speaks, with real examples from the work you already do. Start by surviving your first shift and work up to full conversations.",
+       lEyebrow:"A course for coworkers · Free", lTitle:"Learn English with the vocabulary of your own kitchen.", lLead:"Made for restaurant teams: the English your shift actually speaks, with real examples from the work you already do. Start by surviving your first shift and work up to full conversations.",
        lCta:"Start the course", lFree:"No account. No cost.",
        lHowk:"How it works", lHow:[["Learn","Vocabulary with audio and one example sentence from the kitchen."],["Practice","Comprehension, listening, writing and matching exercises."],["Progress","Six units, from the fundamentals to real shift conversations."]],
        lPathk:"Curriculum", lPatht:"Three levels, from surviving your first shift to waiting tables",
@@ -739,7 +747,7 @@ const LESSON_STEPS={
 /* ---- course structure: levels → units → lessons ---- */
 const LEVELS=[
  {t:{es:"Nivel 1 · Supervivencia",en:"Level 1 · Survival"},units:[
-  {n:"1",total:10,t:{es:["Sobrevivir en inglés","Las frases que te rescatan en cualquier conversación"],en:["Surviving in Spanish","The phrases that rescue you in any conversation"]},
+  {n:"1",total:10,t:{es:["Sobrevivir en inglés","Las frases que te rescatan en cualquier conversación"],en:["Surviving in English","The phrases that rescue you in any conversation"]},
    lessons:[{id:"1"},{id:"2"},{id:"3"},{id:"4"},{id:"5"},{id:"6"},{id:"7"},{id:"8"},{id:"9"},{id:"10"}]},
   {n:"2",total:10,t:{es:["Números, tiempo y mesas","Mesas, cantidades, precios, horas"],en:["Numbers, time & tables","Tables, quantities, prices, times"]},lessons:[{id:"11"}]},
   {n:"3",total:10,t:{es:["Tu restaurante","Cocina, estaciones, ¿dónde va esto?"],en:["Your restaurant","Kitchen, stations, where does this go?"]},lessons:[{id:"21"}]},
@@ -751,7 +759,7 @@ const LEVELS=[
  {t:{es:"Nivel 3 · Clientes",en:"Level 3 · Guests"},units:[
   {n:"8",total:10,t:{es:["Básicos con clientes","Recibir, ¿cuántos?, por aquí, un momento"],en:["Guest basics","Welcoming, how many?, right this way, one moment"]},lessons:[]},
   {n:"9",total:10,t:{es:["Correr comida","¿Quién pidió el pollo? Cuidado, quema"],en:["Food running","Who had the chicken? Careful, it's hot"]},lessons:[]},
-  {n:"10",total:10,t:{es:["Inglés de servidor","Saludar, tomar la orden, recomendar"],en:["Server Spanish","Greeting, taking orders, recommending"]},lessons:[]}]},
+  {n:"10",total:10,t:{es:["Inglés de servidor","Saludar, tomar la orden, recomendar"],en:["Server English","Greeting, taking orders, recommending"]},lessons:[]}]},
  {t:{es:"Rutas · Elige tu camino",en:"Paths · Pick your track"},units:[
   {n:"S",total:20,t:{es:["Ruta · Servidor","Menú, alergias, problemas, la cuenta"],en:["Path · Server","Menu, allergies, problems, the check"]},lessons:[]},
   {n:"K",total:15,t:{es:["Ruta · Cocina","Comandas, prep, tiempos, seguridad"],en:["Path · Kitchen","Tickets, prep, timing, safety"]},lessons:[{id:"126"}]}]}
@@ -759,7 +767,7 @@ const LEVELS=[
 const LESSON_TITLES={
  es:{"1":"Yes · No · Okay · I got it","2":"I don't understand","3":"Can you say that again?","4":"Can you speak slower?","5":"Can you show me?","6":"What does ___ mean?","7":"Which one? · This one?","8":"Where? · Here?","9":"Can you help me?","10":"Repaso · Tu primer turno en inglés",
   "11":"Números del 1 al 10","21":"Tu restaurante","40":"Instrucciones de varios pasos","41":"Avisos de cocina","50":"Reto · Turno ocupado","51":"Saludos y presentaciones","55":"Pedir y ubicar","62":"Días y horarios","126":"La comanda y el chef"},
- en:{"1":"Sí · No · Está bien · Entendido","2":"No entiendo","3":"¿Puedes decirlo otra vez?","4":"¿Puedes hablar más despacio?","5":"¿Me enseñas?","6":"¿Qué significa ___?","7":"¿Cuál? · ¿Éste?","8":"¿Dónde? · ¿Aquí?","9":"¿Me ayudas?","10":"Review · Your first shift in Spanish",
+ en:{"1":"Yes · No · Okay · I got it","2":"I don't understand","3":"Can you say that again?","4":"Can you speak slower?","5":"Can you show me?","6":"What does ___ mean?","7":"Which one? · This one?","8":"Where? · Here?","9":"Can you help me?","10":"Review · Your first shift in English",
   "11":"Numbers 1–10","21":"Your restaurant","40":"Multi-step instructions","41":"Kitchen callouts","50":"Challenge · Busy shift","51":"Greetings & introductions","55":"Asking and locating","62":"Days & schedules","126":"The ticket and the chef"}
 };
 /* the lesson formula: cold-open challenge → see it → learn it → use it → get challenged → realistic situation */
@@ -844,7 +852,7 @@ Object.keys(EXTRA).forEach(id=>{ if(!SIT[id])SIT[id]={en:{},es:{}}; ["en","es"].
 /* skills — what each lesson unlocks (shown on the summary) */
 const SKILLS={
  es:{"1":"Ya puedes confirmar que entendiste","2":"Ya puedes avisar cuando no entiendes","3":"Ya puedes pedir que te lo repitan","4":"Ya puedes pedir que hablen más despacio","5":"Ya puedes pedir que te muestren cómo","6":"Ya puedes preguntar qué significa una palabra","7":"Ya puedes aclarar cuál de las cosas es","8":"Ya puedes preguntar y entender dónde","9":"Ya puedes pedir ayuda a un compañero","10":"Sobreviviste tu primer turno en inglés","11":"Ya entiendes los números del 1 al 10","21":"Ya conoces las áreas y objetos del restaurante","40":"Ya sigues instrucciones de varios pasos","41":"Ya entiendes los avisos de la cocina","50":"Aguantaste un turno ocupado","51":"Ya puedes saludar y presentarte","55":"Ya puedes pedir cosas y ubicarlas","62":"Ya entiendes días y horarios","126":"Ya lees una comanda y respondes al chef"},
- en:{"1":"You can confirm you understood","2":"You can say when you don't understand","3":"You can ask someone to repeat","4":"You can ask someone to slow down","5":"You can ask someone to show you how","6":"You can ask what a word means","7":"You can clarify which one they mean","8":"You can ask and understand where","9":"You can ask a coworker for help","10":"You survived your first shift in Spanish","11":"You understand numbers 1–10","21":"You know the restaurant's areas and objects","40":"You can follow multi-step instructions","41":"You understand kitchen callouts","50":"You handled a busy shift","51":"You can greet and introduce yourself","55":"You can ask for things and locate them","62":"You understand days and schedules","126":"You can read a ticket and answer the chef"}
+ en:{"1":"You can confirm you understood","2":"You can say when you don't understand","3":"You can ask someone to repeat","4":"You can ask someone to slow down","5":"You can ask someone to show you how","6":"You can ask what a word means","7":"You can clarify which one they mean","8":"You can ask and understand where","9":"You can ask a coworker for help","10":"You survived your first shift in English","11":"You understand numbers 1–10","21":"You know the restaurant's areas and objects","40":"You can follow multi-step instructions","41":"You understand kitchen callouts","50":"You handled a busy shift","51":"You can greet and introduce yourself","55":"You can ask for things and locate them","62":"You understand days and schedules","126":"You can read a ticket and answer the chef"}
 };
 
 /* lesson 10 — speed round + shift conversation + THE MISSION */
@@ -899,9 +907,47 @@ const objIcon=(name,size=34)=>`<svg width="${size}" height="${size}" viewBox="0 
 /* =========================================================
    STATE
    ========================================================= */
-let target="en";           // language being learned
-let native=()=>target==="en"?"es":"en";
+let target="en";           // language being learned (locked)
+/* builder mode: flips the CHROME to English for Sammi while she authors;
+   learners keep the Spanish UI. Content/audio unaffected. */
+let builder=false; try{builder=localStorage.getItem("ll_builder")==="1"}catch(e){}
+let native=()=>builder?"en":"es";
 let T=()=>UI[native()];
+/* English glosses for Spanish-only prompts/options, shown only in builder mode */
+const BTR={
+ "¿Qué significa?":"What does it mean?","¿Qué debes hacer?":"What should you do?","¿Qué haces primero?":"What do you do first?",
+ "¿A qué mesa?":"Which table?","¿Dónde?":"Where?","¿Adónde las llevas?":"Where do you take them?","¿Adónde vas?":"Where do you go?",
+ "¿Qué está preguntando?":"What are they asking?","¿Qué te está enseñando?":"What are they teaching you?","¿Cuál charola quiere?":"Which tray do they want?",
+ "¿Qué necesita?":"What do they need?","¿Quién necesita hielo?":"Who needs ice?","¿Cuál es la charola?":"Which one is the tray?","¿Cuál es la servilleta?":"Which one is the napkin?",
+ "La mesa es para dos. ¿Qué falta?":"The table is set for two. What's missing?","¿Cuál y adónde?":"Which one, and where?",
+ "¿Qué mesa necesita agua?":"Which table needs water?","¿Qué te pide?":"What are they asking you for?","Toca en el orden correcto":"Tap in the right order","La hora pico":"The dinner rush",
+ "Entendido":"Got it","No entiendo":"I don't understand","Más despacio":"Slower","Ya terminé":"I'm finished","Necesito ayuda":"I need help",
+ "Llevar esto a la mesa cinco":"Take this to table five","Limpiar la mesa cinco":"Clean table five","Traer cinco platos":"Bring five plates",
+ "Limpiar la mesa seis":"Clean table six","Preparar seis mesas":"Set up six tables","Llevar seis platos":"Carry six plates",
+ "¿Puedes repetirlo?":"Can you say that again?","¿Puedes ayudarme?":"Can you help me?","¿Dónde está?":"Where is it?",
+ "¿Puedes hablar más despacio?":"Can you speak slower?","¿Me ayudas?":"Can you help me?",
+ "Reponer el refri bajo":"Restock the lowboy fridge","Mover el rail":"Move the rail","Recoger el patio":"Break down the patio",
+ "¿Me enseñas?":"Can you show me?","¿Lo hago yo?":"Do I do it?","¿Ya terminamos?":"Are we done?",
+ "Cómo doblar":"How to fold","Cómo limpiar":"How to clean","Cómo cargar":"How to carry",
+ "El significado de una palabra":"The meaning of a word","Dónde está algo":"Where something is","Quién lo hizo":"Who did it",
+ "Reponer las servilletas abajo":"Restock the napkins downstairs","Limpiar abajo":"Clean downstairs","Subir las servilletas":"Bring the napkins upstairs",
+ "¿Cuál?":"Which one?","¿Cuándo?":"When?","¿Cuánto?":"How much?",
+ "La grande junto al fregadero":"The big one by the sink","La pequeña de arriba":"The small one up top","La que está sucia":"The dirty one",
+ "Allá atrás":"Over there, in the back","Aquí adelante":"Up front","Arriba":"Upstairs","Abajo":"Downstairs","Afuera":"Outside","A la barra":"To the bar",
+ "¿Me escuchas?":"Can you hear me?","¿Me esperas?":"Can you wait for me?",
+ "Ayuda para cargar algo pesado":"Help carrying something heavy","Ayuda para limpiar":"Help cleaning","Ayuda para contar":"Help counting",
+ "A la cámara fría":"To the walk-in","Al baño":"To the bathroom","La barra":"The bar","La cocina":"The kitchen","El comedor":"The dining room",
+ "Doblar servilletas aquí":"Fold napkins here","Tirar las servilletas":"Throw the napkins away",
+ "La grande · atrás":"The big one · in the back","La pequeña · arriba":"The small one · upstairs","La sucia · afuera":"The dirty one · outside",
+ "Tres tenedores":"Three forks","Tres cucharas":"Three spoons","Tres vasos":"Three glasses",
+ "Limpiar la mesa 12":"Clear table 12","Rellenar la 8":"Refill 8","Reponer servilletas abajo":"Restock napkins downstairs","Subir manteles":"Take tablecloths upstairs",
+ "'I got it' significa «entendido».":"= 'I got it' means 'entendido.' (TRUE)","'No problem' significa «gran problema».":"= 'No problem' means 'big problem.' (FALSE)",
+ "'Again' significa «otra vez».":"= 'Again' means 'otra vez.' (TRUE)","'Slower' significa «más rápido».":"= 'Slower' means 'faster.' (FALSE)",
+ "'Watch' significa «mira».":"= 'Watch' means 'mira.' (TRUE)","'Restock' significa «tirar a la basura».":"= 'Restock' means 'throw away.' (FALSE)",
+ "'The big one' significa «el grande».":"= 'The big one' means 'el grande.' (TRUE)","'Downstairs' significa «arriba».":"= 'Downstairs' means 'upstairs.' (FALSE)",
+ "'It's heavy' significa «está pesado».":"= 'It's heavy' means 'está pesado.' (TRUE)"
+};
+const btr=s=>builder&&BTR[s]?`<span class="btr">${BTR[s]}</span>`:"";
 let steps=[], idx=0, results=[], picked=null, locked=false;
 let lessonXP=0;
 const award=n=>{lessonXP+=n;};
@@ -1065,9 +1111,9 @@ function render(){
     const d=s.type==="hp"?SD.hp[s.i]:s.d[L];
     s.n=d.ans;
     window.hpSay=f=>speak(d.a,target,f?(d.fast?RATE.fast:RATE.nat):RATE.slow);
-    sc.innerHTML=`<div class="kicker">${s.type==="hpx"?t.kReview:(s.i===0?t.kListenP:t.kUnder)}</div><div class="q sm">${d.q}</div>
+    sc.innerHTML=`<div class="kicker">${s.type==="hpx"?t.kReview:(s.i===0?t.kListenP:t.kUnder)}</div><div class="q sm">${d.q}${btr(d.q)}</div>
       <div class="hearbar"><button class="play lg" onclick="hpSay(1)">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button><span class="spd"><button onclick="hpSay(0)">${t.slow}</button><button onclick="hpSay(1)">${t.fast}</button></span></div>
-      <div class="opts one">${d.opts.map((op,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)"><span class="k">${i+1}</span>${op}</button>`).join("")}</div>`;
+      <div class="opts one">${d.opts.map((op,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)"><span class="k">${i+1}</span><span>${op}${btr(op)}</span></button>`).join("")}</div>`;
     setTimeout(()=>hpSay(1),400);
     setBar("", "", "", t.check, ()=>grade(picked===d.ans, d.a, d.opts[d.ans]));
     disablePrimary();
@@ -1140,7 +1186,7 @@ function render(){
   if(s.type==="tf"){
     const d=SD.tf; s.n=d.truth?0:1;
     sc.innerHTML=`<div class="kicker">${t.kTF}</div><div class="q sm">${t.kTF}</div>
-      <div class="vocab"><div class="word" style="font-size:22px;line-height:1.35">${d.s}</div></div>
+      <div class="vocab"><div class="word" style="font-size:22px;line-height:1.35">${d.s}</div>${builder?`<div class="tr">${BTR[d.s]||""}</div>`:""}</div>
       <div class="opts two">${[t.tTrue,t.tFalse].map((op,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)" style="justify-content:center"><span class="k">${i+1}</span>${op}</button>`).join("")}</div>`;
     setBar("", "", "", t.check, ()=>grade(picked===s.n, d.truth?t.tTrue:t.tFalse, d.s, null, true));
     disablePrimary();
@@ -1149,7 +1195,7 @@ function render(){
   /* ---- TAP THE OBJECT ---- */
   if(s.type==="tapimg"){
     const d=SD.tapimg[s.i]; s.n=d.ans;
-    sc.innerHTML=`<div class="kicker">${t.kTap}</div><div class="q sm">${d.q}</div>
+    sc.innerHTML=`<div class="kicker">${t.kTap}</div><div class="q sm">${d.q}${btr(d.q)}</div>
       <div class="hearbar"><button class="play lg" onclick="speak(steps[idx].word,target)">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button></div>
       <div class="opts two imgopts">${d.icons.map((ic,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)">${objIcon(ic,40)}</button>`).join("")}</div>`;
     s.word=d.word;
@@ -1161,12 +1207,12 @@ function render(){
   /* ---- WHAT'S MISSING? ---- */
   if(s.type==="missing"){
     const d=SD.missing; s.n=d.ans;
-    sc.innerHTML=`<div class="kicker">${t.kMissing}</div><div class="q sm">${d.q}</div>
+    sc.innerHTML=`<div class="kicker">${t.kMissing}</div><div class="q sm">${d.q}${btr(d.q)}</div>
       <div class="panel tableset">
         ${d.setup.map(ic=>`<span class="obj">${objIcon(ic,34)}</span>`).join("")}
         ${Array.from({length:d.miss},()=>`<span class="obj miss"></span>`).join("")}
       </div>
-      <div class="opts two">${d.opts.map((op,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)"><span class="k">${i+1}</span>${op}</button>`).join("")}</div>`;
+      <div class="opts two">${d.opts.map((op,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)"><span class="k">${i+1}</span><span>${op}${btr(op)}</span></button>`).join("")}</div>`;
     setBar("", "", "", t.check, ()=>grade(picked===d.ans, d.word, d.q));
     disablePrimary();
   }
@@ -1175,7 +1221,7 @@ function render(){
   if(s.type==="mission"){
     const d=s.d[L];
     s.mi=0; s.hearts=3; s.mxp=0; s.attempts=0; s.errors=0; s.rounds=d.rounds;
-    sc.innerHTML=`<div class="kicker">${t.kMission}</div><div class="q">${d.name}</div>
+    sc.innerHTML=`<div class="kicker">${t.kMission}</div><div class="q">${d.name}${btr(d.name)}</div>
       <div class="mstat"><span class="lives" id="mlives"></span><span class="mxpc" id="mxpc">0 XP</span></div>
       <p class="hint" style="margin:0 0 14px">${t.missionHint}</p>
       <div id="mzone"></div>`;
@@ -1365,12 +1411,12 @@ function missionRound(){
   const z=$("#mzone");
   window.mSay=f=>speak(r.a,target,f?RATE.nat:RATE.slow);
   if(r.k==="pick"||r.k==="first"){
-    z.innerHTML=`<div class="mq">${r.q}</div>
+    z.innerHTML=`<div class="mq">${r.q}${btr(r.q)}</div>
       <div class="hearbar" style="margin:4px 0 16px"><button class="play lg" onclick="mSay(1)">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button><span class="spd"><button onclick="mSay(0)">${t.slow}</button><button onclick="mSay(1)">${t.fast}</button></span></div>
-      <div class="opts one">${r.opts.map((op,i)=>`<button class="opt" onclick="missionAnswer(${i})"><span class="k">${i+1}</span>${op}</button>`).join("")}</div>`;
+      <div class="opts one">${r.opts.map((op,i)=>`<button class="opt" onclick="missionAnswer(${i})"><span class="k">${i+1}</span><span>${op}${btr(op)}</span></button>`).join("")}</div>`;
   }else{ // tap sequence
     s.pos=0;
-    z.innerHTML=`<div class="mq">${r.q}</div>
+    z.innerHTML=`<div class="mq">${r.q}${btr(r.q)}</div>
       <div class="hearbar" style="margin:4px 0 16px"><button class="play lg" onclick="mSay(1)">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button><span class="spd"><button onclick="mSay(0)">${t.slow}</button><button onclick="mSay(1)">${t.fast}</button></span></div>
       <div class="opts two imgopts">${r.board.map(([ic,label],i)=>`<button class="opt mtile" id="mt${i}" onclick="missionTap(${i})" style="flex-direction:column;gap:6px">${objIcon(ic,34)}<span style="font-size:13px;font-weight:600">${label}</span></button>`).join("")}</div>
       <p class="muted" style="text-align:center;margin-top:10px" id="mprog">${s.pos} / ${r.seq.length}</p>`;
@@ -1624,6 +1670,17 @@ document.addEventListener("keydown",e=>{
 });
 
 setTarget("en");
+
+/* builder-mode toggle (bottom-left pill): English chrome + prompt glosses for authoring */
+function setBuilder(on){
+  builder=on; try{localStorage.setItem("ll_builder",on?"1":"0")}catch(e){}
+  const b=$("#bmode"); b.textContent=on?"ES":"EN"; b.classList.toggle("on",on);
+  document.documentElement.lang=native();
+  renderHome();
+  if(document.body.classList.contains("in-lesson")){ if(window.speechSynthesis)speechSynthesis.cancel(); render(); }
+}
+$("#bmode").onclick=()=>setBuilder(!builder);
+setBuilder(builder);
 </script>
 </body>
 </html>
