@@ -1,6 +1,6 @@
 # Dale, Chef — bilingual kitchen language course
 
-Free web platform that teaches **English to Spanish-speaking kitchen staff** and **Spanish to English-speaking kitchen staff**. Same course, both directions. Built by Sammi (instructional designer, manages a restaurant) for her coworkers. **Named "Dale, Chef" (dalechef.com, bought 2026-10-06)** — the brand is one string (`#brandName` + two `<title>`s); repo/folder keep the old working name `la-linea`.
+Free web platform that teaches **English to Spanish-speaking restaurant staff** (UI speaks Spanish; target language is English — one direction only, decided 2026-11-05). Built by Sammi (instructional designer, manages a restaurant) for her coworkers. **Named "Dale, Chef" (dalechef.com, bought 2026-10-06)** — the brand is one string (`#brandName` + two `<title>`s); repo/folder keep the old working name `la-linea`.
 
 ## What exists
 
@@ -14,7 +14,7 @@ Both demos are the design source of truth. Match them exactly; do not restyle.
 
 1. **Adult, professional, modern.** Think Babbel or a university LMS, not Duolingo. No mascots, no confetti, no cartoon plates, no emoji in UI. Sammi rejected three rounds of "cute" before landing here.
 2. **Structured like a real language course.** Units → lessons → exercise sequence. Fundamentals first (greetings, numbers, verbs), kitchen vocabulary as the *examples*, not as the whole syllabus.
-3. **Both directions, always.** Every piece of content has an `en` variant (learner studies English, UI speaks Spanish) and an `es` variant (learner studies Spanish, UI speaks English). The header toggle flips the entire platform. Nothing ships in one direction only.
+3. **English-learning only (changed 2026-11-05).** The course teaches English to Spanish speakers; UI speaks Spanish. The direction toggle and the "both directions" landing section were removed; `target` is locked to `"en"`. The old `es`-direction content (SIT[id].es, UI.en, LESSON_TITLES.en, SKILLS.en, unit titles .en) is DORMANT in the file — never reachable, kept only to avoid risky deletion; strip it during the file split. **Author all new content with the `en` key only** (Spanish scaffolding lives inside it).
 4. **Free, no account** for v1. Progress can live in `localStorage`.
 5. **Mobile first.** Coworkers use it on phones. 390px is the primary viewport; desktop is secondary.
 

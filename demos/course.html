@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Dale, Chef · Kitchen language course</title>
+<title>Dale, Chef · Inglés para la cocina</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -329,10 +329,6 @@
   <button class="brand" onclick="goLanding()"><i></i><span id="brandName">Dale, Chef</span></button>
   <nav class="nav" id="nav">
     <button id="navCourse" onclick="goHome()"></button>
-    <div class="seg" id="langSeg">
-      <button class="on" data-l="en">English</button>
-      <button data-l="es">Español</button>
-    </div>
   </nav>
 </div></header>
 
@@ -357,11 +353,6 @@
     <div class="eyebrow" id="l-pathk"></div>
     <h2 class="h2" id="l-patht"></h2>
     <ol class="path" id="l-path"></ol>
-  </section>
-
-  <section class="wrap band two-way">
-    <div><div class="eyebrow" id="l-twok"></div><h2 class="h2" id="l-twot"></h2><p class="lead" id="l-twol"></p></div>
-    <div class="pair"><div><b>EN → ES</b><span id="l-pa"></span></div><div><b>ES → EN</b><span id="l-pb"></span></div></div>
   </section>
 
   <footer class="wrap foot"><span id="brandFoot"></span><span id="l-foot"></span></footer>
@@ -965,23 +956,19 @@ const SPK=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="c
    HOME
    ========================================================= */
 function setTarget(l){
-  target=l;
-  document.querySelectorAll("#langSeg button").forEach(b=>b.classList.toggle("on",b.dataset.l===l));
+  target=l; /* locked to "en": the course teaches English (UI speaks Spanish) */
   document.documentElement.lang=native();
   renderHome();
 }
 function renderLanding(){
   const t=T();
   $("#navCourse").textContent=t.nav;
-  $("#langSeg").dataset.label=native()==="es"?"Aprendo":"Learning";
   $("#l-eyebrow").textContent=t.lEyebrow; $("#l-title").textContent=t.lTitle; $("#l-lead").textContent=t.lLead;
   $("#l-cta").textContent=t.lCta; $("#l-free").textContent=t.lFree;
   $("#l-howk").textContent=t.lHowk;
   $("#l-how").innerHTML=t.lHow.map(([b,p],i)=>`<div><i>0${i+1}</i><b>${b}</b><p>${p}</p></div>`).join("");
   $("#l-pathk").textContent=t.lPathk; $("#l-patht").textContent=t.lPatht;
   $("#l-path").innerHTML=t.units.map(([n,d],i)=>`<li><em>U${i+1}</em><div><b>${n}</b><br><span>${d}</span></div></li>`).join("");
-  $("#l-twok").textContent=t.lTwok; $("#l-twot").textContent=t.lTwot; $("#l-twol").textContent=t.lTwol;
-  $("#l-pa").textContent=t.lPa; $("#l-pb").textContent=t.lPb;
   $("#brandFoot").textContent=$("#brandName").textContent; $("#l-foot").textContent=t.lFoot;
 }
 function renderHome(){
@@ -1010,7 +997,6 @@ function renderHome(){
     });
   });
 }
-document.querySelectorAll("#langSeg button").forEach(b=>b.onclick=()=>setTarget(b.dataset.l));
 
 /* =========================================================
    LESSON  — build a sequence of exercise steps
