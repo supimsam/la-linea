@@ -431,7 +431,7 @@ const UI = {
       rapidDone:(s,t)=>`${s} de ${t} correctas`,time:"Tiempo",scoreL:"Puntos",
       kVocab:"Vocabulario",qPick:"Elige la traducción",
       kScene:"Escena",kChunks:"Frases clave",kListenP:"Escucha",kUnder:"Comprende",kSay:"Habla",kRole:"Conversación",kReview:"Repaso",
-      slow:"Lento",fast:"Natural",replay:"Repetir",subs:"+ Traducción",
+      slow:"Lento",fast:"Natural",replay:"Escuchar",subs:"+ Traducción",
       sceneHint:"Escucha la escena. Repítela las veces que quieras.",
       chunkHint:"Toca cada frase para escucharla. Lento y Natural cambian la velocidad.",
       sayHint:"Escucha a tu gerente y responde en voz alta.",yourReply:"Tu respuesta",managerSays:"Tu gerente dice:",
@@ -469,7 +469,7 @@ const UI = {
       rapidDone:(s,t)=>`${s} of ${t} correct`,time:"Time",scoreL:"Score",
       kVocab:"Vocabulary",qPick:"Choose the translation",
       kScene:"Scene",kChunks:"Key phrases",kListenP:"Listen",kUnder:"Understand",kSay:"Speak",kRole:"Conversation",kReview:"Review",
-      slow:"Slow",fast:"Natural",replay:"Replay",subs:"+ Translation",
+      slow:"Slow",fast:"Natural",replay:"Listen",subs:"+ Translation",
       sceneHint:"Listen to the scene. Replay it as many times as you like.",
       chunkHint:"Tap each phrase to hear it. Slow and Natural change the speed.",
       sayHint:"Listen to your manager, then answer out loud.",yourReply:"Your reply",managerSays:"Your manager says:",
@@ -521,7 +521,7 @@ const EX=[
         es:{labels:["Primero","Luego","Después","Por último"],steps:["Calienta la sartén.","Agrega el aceite.","Sella el pescado.","Emplata y canta."]}}},
  {id:"rapid",unit:1,skills:["vocab","read"],
   meta:{es:["Frases de supervivencia · Ráfaga","Avisos que se gritan en la cocina. Relaciona rápido, con tiempo."],en:["Survival phrases · Rapid fire","Callouts you shout on the line. Match fast, against the clock."]},
-  data:{en:{pairs:[["Behind!","¡Atrás!"],["Hot!","¡Caliente!"],["Corner!","¡Esquina!"],["Heard!","¡Escuchado!"],["Sharp!","¡Cuchillo!"],["Order up!","¡Sale pedido!"],["86 the soup","Se acabó la sopa"],["All day","En total"]]},
+  data:{en:{pairs:[["Behind!","¡Atrás!"],["Hot!","¡Caliente!"],["Corner!","¡Esquina!"],["Heard!","¡Escuchado!"],["Sharp!","¡Cuchillo!"],["Order up!","¡Sale pedido!"],["86 the soup","Se acabó la sopa"],["All day","En total"],["Careful!","¡Cuidado!"]]},
         es:{pairs:[["¡Atrás!","Behind!"],["¡Caliente!","Hot!"],["¡Esquina!","Corner!"],["¡Escuchado!","Heard!"],["¡Cuchillo!","Sharp!"],["¡Sale pedido!","Order up!"],["Se acabó la sopa","86 the soup"],["En total","All day"]]}}},
  {id:"dict",unit:2,skills:["listen","write"],
   meta:{es:["Dictado","Escucha una frase completa y escríbela."],en:["Dictation","Hear a full sentence and type it."]},
@@ -707,6 +707,21 @@ const SIT={
  es:{chunks:[["la cocina","the kitchen"],["el comedor","the dining room"],["la barra","the bar"],["el baño","the bathroom"],["arriba","upstairs"],["abajo","downstairs"],["la cámara fría","the walk-in"]],
   hp:[{a:"Lleva esto a la cámara fría, por favor.",q:"Where do you go?",opts:["To the walk-in","To the bathroom","Upstairs"],ans:0},
       {a:"La barra necesita más hielo.",q:"Who needs ice?",opts:["The bar","The kitchen","The dining room"],ans:0}]}}
+,
+"52":{
+ en:{scene:[["C","Do you need anything from the kitchen?","¿Necesitas algo de la cocina?"],["Y","Yes — I need silverware.","Sí, necesito cubiertos."],["C","I got it. I'll get the silverware.","Entendido. Yo traigo los cubiertos."],["Y","Thank you!","¡Gracias!"]],
+  chunks:[["Do you need anything?","¿Necesitas algo?"],["I'm coming","Ya voy"],["I'll get the silverware","Yo traigo los cubiertos"],["Are you busy?","¿Estás ocupado?"],["It's not urgent","No es urgente"],["Be careful","Cuidado"]],
+  hp:[{a:"Do you need anything?",q:"¿Qué te está preguntando?",opts:["Si necesitas algo","Si estás ocupado","Si ya terminaste"],ans:0},
+      {a:"Are you busy? It's not urgent.",q:"¿Qué te está diciendo?",opts:["Pregunta si estás ocupado; no hay prisa","Que es una emergencia","Que ya se va"],ans:0}],
+  fill:{s:"Do you ___ anything?",tr:"¿Necesitas algo?",opts:["need","sleep","sing","paint"],ans:0},
+  bld:{sentence:"I'll get the silverware.",trans:"Yo traigo los cubiertos.",extra:["napkins","busy"]},
+  tf:{s:"'It's not urgent' significa «no hay prisa».",truth:true},
+  say:{p:["Hey, can you help me when you get a chance?","Oye, ¿me ayudas cuando puedas?"],r:["I'm coming!","¡Ya voy!"],ok:["im coming","i am coming","coming"]},
+  rp:[{w:"C",m:["Do you need anything from downstairs?","¿Necesitas algo de abajo?"],o:[["Yes — napkins, please.","Sí, servilletas, por favor.","ok"],["Can you say that again?","¿Puedes repetirlo?","r"],["No, thank you. I'm okay.","No, gracias. Estoy bien.","ok"]]},
+      {w:"C",m:["I got it. Careful — the floor is wet over there.","Entendido. Cuidado: el piso está mojado allá."],o:[["Thank you! Be careful too.","¡Gracias! Cuidado tú también.","ok",3],["What does 'wet' mean?","¿Qué significa 'wet'?","r",2]]},
+      {w:"C",m:["Wet means water on the floor — mojado.","'Wet' significa agua en el piso: mojado."],o:[["Oh! I got it.","¡Ah! Entendido.","ok"]]},
+      {w:"C",m:["Here are your napkins. I'm heading back up.","Aquí están tus servilletas. Ya subo."],o:[["Thank you — I owe you one!","¡Gracias, te debo una!","ok"],["You're the best.","Eres lo máximo.","ok"]]}]}
+}
 };
 
 /* ---- review lesson 10 + legacy lesson steps ---- */
@@ -754,7 +769,7 @@ const LEVELS=[
   {n:"4",total:10,t:{es:["Instrucciones","Trae, lleva, limpia, repón — y pasos múltiples"],en:["Instructions","Bring, take, clean, restock — and multi-step"]},lessons:[{id:"40"}]}]},
  {t:{es:"Nivel 2 · El equipo",en:"Level 2 · The team"},units:[
   {n:"5",total:10,t:{es:["Lenguaje de cocina","¡Atrás! ¡Esquina! ¡Caliente! — los gritos del turno"],en:["Kitchen language","Behind! Corner! Hot! — the callouts of the shift"]},lessons:[{id:"41"},{id:"50"}]},
-  {n:"6",total:10,t:{es:["Conversaciones con compañeros","Pedir ayuda, ofrecer, confirmar, corregir"],en:["Coworker conversations","Asking for help, offering, confirming, correcting"]},lessons:[{id:"51"},{id:"55"}]},
+  {n:"6",total:10,t:{es:["Conversaciones con compañeros","Pedir ayuda, ofrecer, confirmar, corregir"],en:["Coworker conversations","Asking for help, offering, confirming, correcting"]},lessons:[{id:"51"},{id:"52"},{id:"55"}]},
   {n:"7",total:10,t:{es:["Trabajo y horarios","Turnos, llegar tarde, cubrir, días libres"],en:["Work & scheduling","Shifts, running late, covering, time off"]},lessons:[{id:"62"}]}]},
  {t:{es:"Nivel 3 · Clientes",en:"Level 3 · Guests"},units:[
   {n:"8",total:10,t:{es:["Básicos con clientes","Recibir, ¿cuántos?, por aquí, un momento"],en:["Guest basics","Welcoming, how many?, right this way, one moment"]},lessons:[]},
@@ -766,9 +781,9 @@ const LEVELS=[
 ];
 const LESSON_TITLES={
  es:{"1":"Yes · No · Okay · I got it","2":"I don't understand","3":"Can you say that again?","4":"Can you speak slower?","5":"Can you show me?","6":"What does ___ mean?","7":"Which one? · This one?","8":"Where? · Here?","9":"Can you help me?","10":"Repaso · Tu primer turno en inglés",
-  "11":"Números del 1 al 10","21":"Tu restaurante","40":"Instrucciones de varios pasos","41":"Avisos de cocina","50":"Reto · Turno ocupado","51":"Saludos y presentaciones","55":"Pedir y ubicar","62":"Días y horarios","126":"La comanda y el chef"},
+  "52":"Do you need anything?","11":"Números del 1 al 10","21":"Tu restaurante","40":"Instrucciones de varios pasos","41":"Avisos de cocina","50":"Reto · Turno ocupado","51":"Saludos y presentaciones","55":"Pedir y ubicar","62":"Días y horarios","126":"La comanda y el chef"},
  en:{"1":"Yes · No · Okay · I got it","2":"I don't understand","3":"Can you say that again?","4":"Can you speak slower?","5":"Can you show me?","6":"What does ___ mean?","7":"Which one? · This one?","8":"Where? · Here?","9":"Can you help me?","10":"Review · Your first shift in English",
-  "11":"Numbers 1–10","21":"Your restaurant","40":"Multi-step instructions","41":"Kitchen callouts","50":"Challenge · Busy shift","51":"Greetings & introductions","55":"Asking and locating","62":"Days & schedules","126":"The ticket and the chef"}
+  "52":"Do you need anything?","11":"Numbers 1–10","21":"Your restaurant","40":"Multi-step instructions","41":"Kitchen callouts","50":"Challenge · Busy shift","51":"Greetings & introductions","55":"Asking and locating","62":"Days & schedules","126":"The ticket and the chef"}
 };
 /* the lesson formula: cold-open challenge → see it → learn it → use it → get challenged → realistic situation */
 const LOOP_STEPS=()=>[{type:"hp",i:0},{type:"scene"},{type:"chunks"},{type:"fillx"},{type:"bld"},{type:"hp",i:1},{type:"tf"},{type:"say"},{type:"rp"},{type:"summary"}];
@@ -851,8 +866,8 @@ Object.keys(EXTRA).forEach(id=>{ if(!SIT[id])SIT[id]={en:{},es:{}}; ["en","es"].
 
 /* skills — what each lesson unlocks (shown on the summary) */
 const SKILLS={
- es:{"1":"Ya puedes confirmar que entendiste","2":"Ya puedes avisar cuando no entiendes","3":"Ya puedes pedir que te lo repitan","4":"Ya puedes pedir que hablen más despacio","5":"Ya puedes pedir que te muestren cómo","6":"Ya puedes preguntar qué significa una palabra","7":"Ya puedes aclarar cuál de las cosas es","8":"Ya puedes preguntar y entender dónde","9":"Ya puedes pedir ayuda a un compañero","10":"Sobreviviste tu primer turno en inglés","11":"Ya entiendes los números del 1 al 10","21":"Ya conoces las áreas y objetos del restaurante","40":"Ya sigues instrucciones de varios pasos","41":"Ya entiendes los avisos de la cocina","50":"Aguantaste un turno ocupado","51":"Ya puedes saludar y presentarte","55":"Ya puedes pedir cosas y ubicarlas","62":"Ya entiendes días y horarios","126":"Ya lees una comanda y respondes al chef"},
- en:{"1":"You can confirm you understood","2":"You can say when you don't understand","3":"You can ask someone to repeat","4":"You can ask someone to slow down","5":"You can ask someone to show you how","6":"You can ask what a word means","7":"You can clarify which one they mean","8":"You can ask and understand where","9":"You can ask a coworker for help","10":"You survived your first shift in English","11":"You understand numbers 1–10","21":"You know the restaurant's areas and objects","40":"You can follow multi-step instructions","41":"You understand kitchen callouts","50":"You handled a busy shift","51":"You can greet and introduce yourself","55":"You can ask for things and locate them","62":"You understand days and schedules","126":"You can read a ticket and answer the chef"}
+ es:{"1":"Ya puedes confirmar que entendiste","2":"Ya puedes avisar cuando no entiendes","3":"Ya puedes pedir que te lo repitan","4":"Ya puedes pedir que hablen más despacio","5":"Ya puedes pedir que te muestren cómo","6":"Ya puedes preguntar qué significa una palabra","7":"Ya puedes aclarar cuál de las cosas es","8":"Ya puedes preguntar y entender dónde","9":"Ya puedes pedir ayuda a un compañero","10":"Sobreviviste tu primer turno en inglés","11":"Ya entiendes los números del 1 al 10","21":"Ya conoces las áreas y objetos del restaurante","40":"Ya sigues instrucciones de varios pasos","41":"Ya entiendes los avisos de la cocina","50":"Aguantaste un turno ocupado","52":"Ya puedes ofrecer ayuda y avisar que vas","51":"Ya puedes saludar y presentarte","55":"Ya puedes pedir cosas y ubicarlas","62":"Ya entiendes días y horarios","126":"Ya lees una comanda y respondes al chef"},
+ en:{"1":"You can confirm you understood","2":"You can say when you don't understand","3":"You can ask someone to repeat","4":"You can ask someone to slow down","5":"You can ask someone to show you how","6":"You can ask what a word means","7":"You can clarify which one they mean","8":"You can ask and understand where","9":"You can ask a coworker for help","10":"You survived your first shift in English","11":"You understand numbers 1–10","21":"You know the restaurant's areas and objects","40":"You can follow multi-step instructions","41":"You understand kitchen callouts","50":"You handled a busy shift","52":"You can offer help and say you're on your way","51":"You can greet and introduce yourself","55":"You can ask for things and locate them","62":"You understand days and schedules","126":"You can read a ticket and answer the chef"}
 };
 
 /* lesson 10 — speed round + shift conversation + THE MISSION */
@@ -945,7 +960,10 @@ const BTR={
  "'Again' significa «otra vez».":"= 'Again' means 'otra vez.' (TRUE)","'Slower' significa «más rápido».":"= 'Slower' means 'faster.' (FALSE)",
  "'Watch' significa «mira».":"= 'Watch' means 'mira.' (TRUE)","'Restock' significa «tirar a la basura».":"= 'Restock' means 'throw away.' (FALSE)",
  "'The big one' significa «el grande».":"= 'The big one' means 'el grande.' (TRUE)","'Downstairs' significa «arriba».":"= 'Downstairs' means 'upstairs.' (FALSE)",
- "'It's heavy' significa «está pesado».":"= 'It's heavy' means 'está pesado.' (TRUE)"
+ "'It's heavy' significa «está pesado».":"= 'It's heavy' means 'está pesado.' (TRUE)",
+ "¿Qué te está preguntando?":"What are they asking you?","Si necesitas algo":"Whether you need anything","Si estás ocupado":"Whether you're busy","Si ya terminaste":"Whether you're finished",
+ "¿Qué te está diciendo?":"What are they telling you?","Pregunta si estás ocupado; no hay prisa":"They're asking if you're busy — no rush","Que es una emergencia":"That it's an emergency","Que ya se va":"That they're leaving",
+ "'It's not urgent' significa «no hay prisa».":"= 'It's not urgent' means 'no rush.' (TRUE)"
 };
 const btr=s=>builder&&BTR[s]?`<span class="btr">${BTR[s]}</span>`:"";
 let steps=[], idx=0, results=[], picked=null, locked=false;
@@ -973,12 +991,27 @@ function pickVoices(){
   }
 }
 if("speechSynthesis" in window){ pickVoices(); speechSynthesis.onvoiceschanged=pickVoices; }
+/* pre-rendered audio: audio/manifest.json maps phrase → .m4a file (works everywhere,
+   incl. browsers whose TTS is broken). speechSynthesis remains the fallback. */
+let AUD={};
+fetch("audio/manifest.json").then(r=>r.ok?r.json():{}).then(m=>{AUD=m||{};}).catch(()=>{});
+const audEl=new Audio();
+const SILENT="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+function playFile(url, rate, onend){
+  if(window.speechSynthesis)speechSynthesis.cancel();
+  audEl.onended=onend||null;
+  audEl.src=url;
+  audEl.playbackRate=rate<=0.6?0.62:(rate>=1.1?1.15:1);
+  audEl.play().catch(()=>{});
+}
 let ttsUnlocked=false;
 document.addEventListener("pointerdown",()=>{
-  if(ttsUnlocked||!("speechSynthesis" in window))return; ttsUnlocked=true;
-  const u=new SpeechSynthesisUtterance(" "); u.volume=0; speechSynthesis.speak(u);
+  if(ttsUnlocked)return; ttsUnlocked=true;
+  audEl.src=SILENT; audEl.play().catch(()=>{});
+  if("speechSynthesis" in window){ const u=new SpeechSynthesisUtterance(" "); u.volume=0; speechSynthesis.speak(u); }
 },true);
 function speak(word, lang=target, rate=.95){
+  if(lang==="en"&&AUD[word]){ playFile("audio/"+AUD[word], rate); return; }
   if(!("speechSynthesis" in window))return;
   const u=new SpeechSynthesisUtterance(word);u.lang=VOICE[lang];u.rate=rate;
   if(VPICK[lang])u.voice=VPICK[lang];
@@ -987,11 +1020,14 @@ function speak(word, lang=target, rate=.95){
 const RATE={slow:.55, nat:1.0, fast:1.12};
 /* play an array of [who,text,trans] lines in order, highlighting as we go */
 function speakSeq(lines, i=0){
-  if(!("speechSynthesis" in window)||i>=lines.length)return;
+  if(i>=lines.length){ document.querySelectorAll("#chat .msg").forEach(m=>m.classList.remove("cur")); return; }
   document.querySelectorAll("#chat .msg").forEach((m,k)=>m.classList.toggle("cur",k===i));
-  const u=new SpeechSynthesisUtterance(lines[i][1]);u.lang=VOICE[target];u.rate=.92;
+  const txt=lines[i][1], next=()=>setTimeout(()=>speakSeq(lines,i+1),350);
+  if(AUD[txt]){ playFile("audio/"+AUD[txt], 1, next); return; }
+  if(!("speechSynthesis" in window))return;
+  const u=new SpeechSynthesisUtterance(txt);u.lang=VOICE[target];u.rate=.92;
   if(VPICK[target])u.voice=VPICK[target];
-  u.onend=()=>setTimeout(()=>speakSeq(lines,i+1),350);
+  u.onend=next;
   if(i===0)speechSynthesis.cancel();
   speechSynthesis.speak(u);speechSynthesis.resume();
 }
@@ -1092,7 +1128,6 @@ function render(){
         <button class="sbtn" id="subT" onclick="document.querySelector('#chat').classList.toggle('subs');this.classList.toggle('on')">${t.subs}</button>
       </div>
       <p class="hint">${t.sceneHint}</p>`;
-    setTimeout(()=>speakSeq(d),450);
     setBar("", "", "", t.next+" →", ()=>advance(null));
   }
 
@@ -1111,10 +1146,9 @@ function render(){
     const d=s.type==="hp"?SD.hp[s.i]:s.d[L];
     s.n=d.ans;
     window.hpSay=f=>speak(d.a,target,f?(d.fast?RATE.fast:RATE.nat):RATE.slow);
-    sc.innerHTML=`<div class="kicker">${s.type==="hpx"?t.kReview:(s.i===0?t.kListenP:t.kUnder)}</div><div class="q sm">${d.q}${btr(d.q)}</div>
-      <div class="hearbar"><button class="play lg" onclick="hpSay(1)">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button><span class="spd"><button onclick="hpSay(0)">${t.slow}</button><button onclick="hpSay(1)">${t.fast}</button></span></div>
+    sc.innerHTML=`<div class="kicker">${s.type==="hpx"?t.kReview:t.kUnder}</div><div class="q sm">${d.q}${btr(d.q)}</div>
+      <div class="vocab" style="padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px"><div class="word" style="font-size:22px;line-height:1.3">${d.a}</div><span style="display:inline-flex;align-items:center;gap:8px;flex:none"><button class="play" onclick="hpSay(1)">${SPK}</button><span class="spd"><button onclick="hpSay(0)">${t.slow}</button><button onclick="hpSay(1)">${t.fast}</button></span></span></div>
       <div class="opts one">${d.opts.map((op,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)"><span class="k">${i+1}</span><span>${op}${btr(op)}</span></button>`).join("")}</div>`;
-    setTimeout(()=>hpSay(1),400);
     setBar("", "", "", t.check, ()=>grade(picked===d.ans, d.a, d.opts[d.ans]));
     disablePrimary();
   }
@@ -1136,7 +1170,6 @@ function render(){
       </div>
       ${SR?`<button class="mic" id="mic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></button><div class="heard" id="heard"></div><p class="muted" style="text-align:center" id="mhint">${t.tapMic}</p>`
           :`<p class="muted" style="margin-bottom:10px">${t.noSR}</p><input class="field" id="sp" autocomplete="off" placeholder="…">`}`;
-    setTimeout(()=>saySay(1),400);
     const sayDone=ok=>{
       results.push({ok, word:d.r[0], other:d.r[1]});
       if(ok)award(15);
@@ -1199,7 +1232,6 @@ function render(){
       <div class="hearbar"><button class="play lg" onclick="speak(steps[idx].word,target)">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button></div>
       <div class="opts two imgopts">${d.icons.map((ic,i)=>`<button class="opt" data-k="${i}" onclick="choose(${i},this)">${objIcon(ic,40)}</button>`).join("")}</div>`;
     s.word=d.word;
-    setTimeout(()=>speak(d.word,target),400);
     setBar("", "", "", t.check, ()=>grade(picked===d.ans, d.word, d.q));
     disablePrimary();
   }
@@ -1243,7 +1275,7 @@ function render(){
     sc.innerHTML=`<div class="kicker">${t.kVocab}</div><div class="q">${LESSON_TITLES[O][currentLesson]}</div>
       <div class="vocab" id="vcard"></div>
       <div class="grid3">${V.map((w,i)=>`<button class="chip" onclick="showVocab('${s.set}',${i})"><b>${w[0]}</b><span>${w[1]}</span></button>`).join("")}</div>`;
-    showVocab(s.set,0);
+    showVocab(s.set,0,true);
     setBar("", "", "", t.practice+" →", ()=>advance(null));
   }
 
@@ -1266,7 +1298,7 @@ function render(){
     sc.innerHTML=`<div class="kicker">${t.kLearn}</div><div class="q">${t.qLearn}</div>
       <div class="vocab" id="vcard"></div>
       <div class="grid3">${NUM[L].map((w,i)=>`<button class="chip" onclick="showWord(${i})"><b>${w}</b><span>${o(i)}</span></button>`).join("")}</div>`;
-    showWord(0);
+    showWord(0,true);
     setBar("", "", "", t.practice+" →", ()=>advance(null));
   }
 
@@ -1283,8 +1315,7 @@ function render(){
     sc.innerHTML=`<div class="kicker">${t.kListen}</div><div class="q">${t.qListen}</div>
       <div style="display:flex;justify-content:center;margin-bottom:24px"><button class="play" style="width:72px;height:72px" onclick="speak('${n(s.n)}')">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button></div>
       <div class="opts two">${opts.map((k,i)=>`<button class="opt" data-k="${k}" onclick="choose(${k},this)"><span class="k">${i+1}</span>${n(k)}</button>`).join("")}</div>`;
-    setTimeout(()=>speak(n(s.n)),350);
-    setBar("", "", "", t.check, ()=>grade(picked===s.n, n(s.n), o(s.n))); disablePrimary();
+        setBar("", "", "", t.check, ()=>grade(picked===s.n, n(s.n), o(s.n))); disablePrimary();
   }
 
   if(s.type==="type"){
@@ -1349,17 +1380,17 @@ function distractors(n){
   while(set.size<4){const d=n+Math.floor(Math.random()*7)-3; if(d>=0&&d<=9)set.add(d);}
   return [...set];
 }
-function showVocab(set,i){
+function showVocab(set,i,quiet){
   const V=VOCAB[set][target][i];
   $("#vcard").innerHTML=`<div class="word" style="font-size:32px">${V[0]}<button class="play" data-say="${V[0]}" onclick="speak(this.dataset.say)">${SPK}</button></div><div class="tr">${V[1]}</div><div class="ex"><b>${V[2]}</b><span>${V[3]}</span></div>`;
-  speak(V[0]);
+  if(!quiet)speak(V[0]);
 }
-function showWord(i){
+function showWord(i,quiet){
   const L=target, O=native(), [ex,tr]=EXAMPLES[L][i];
   $("#vcard").innerHTML=`<div class="word">${NUM[L][i]}<button class="play" onclick="speak('${NUM[L][i]}')">${SPK}</button></div>
     <div class="tr">${NUM[O][i]}</div>
     <div class="ex"><b>${ex}</b><span>${tr}</span></div>`;
-  speak(NUM[L][i]);
+  if(!quiet)speak(NUM[L][i]);
 }
 function choose(k,el){
   if(locked)return; picked=k;
@@ -1375,8 +1406,7 @@ function matchPick(el){
   const a=s.first; s.first=null;
   if(ok){
     [a,el].forEach(x=>{x.classList.remove("sel");x.classList.add("ok");setTimeout(()=>{x.classList.remove("ok");x.classList.add("gone");},350);});
-    speak(NUM[target][+el.dataset.k]);
-    if(--s.remaining===0){ $("#primary").disabled=false; }
+        if(--s.remaining===0){ $("#primary").disabled=false; }
   }else{
     s.misses++;
     [a,el].forEach(x=>{x.classList.remove("sel");x.classList.add("err");setTimeout(()=>x.classList.remove("err"),450);});
@@ -1391,7 +1421,6 @@ function grade(ok, word, other, sentence, quiet){
   });
   results.push({ok, word, other});
   if(ok)award(10);
-  if(!quiet)speak(word);
   setBar(ok?"ok":"err", ok?`${t.correct} · +10 XP`:`${t.incorrect} ${word}`, sentence?sentence:`${word} · ${other}`, t.next, ()=>{idx++;render();window.scrollTo(0,0);});
 }
 function advance(ok){
@@ -1412,16 +1441,15 @@ function missionRound(){
   window.mSay=f=>speak(r.a,target,f?RATE.nat:RATE.slow);
   if(r.k==="pick"||r.k==="first"){
     z.innerHTML=`<div class="mq">${r.q}${btr(r.q)}</div>
-      <div class="hearbar" style="margin:4px 0 16px"><button class="play lg" onclick="mSay(1)">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button><span class="spd"><button onclick="mSay(0)">${t.slow}</button><button onclick="mSay(1)">${t.fast}</button></span></div>
+      <div class="panel" style="padding:14px 16px;margin:8px 0 14px;display:flex;align-items:center;justify-content:space-between;gap:10px"><b style="font-size:17px">${r.a}</b><button class="play" onclick="mSay(1)">${SPK}</button></div>
       <div class="opts one">${r.opts.map((op,i)=>`<button class="opt" onclick="missionAnswer(${i})"><span class="k">${i+1}</span><span>${op}${btr(op)}</span></button>`).join("")}</div>`;
   }else{ // tap sequence
     s.pos=0;
     z.innerHTML=`<div class="mq">${r.q}${btr(r.q)}</div>
-      <div class="hearbar" style="margin:4px 0 16px"><button class="play lg" onclick="mSay(1)">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button><span class="spd"><button onclick="mSay(0)">${t.slow}</button><button onclick="mSay(1)">${t.fast}</button></span></div>
+      <div class="panel" style="padding:14px 16px;margin:8px 0 14px;display:flex;align-items:center;justify-content:space-between;gap:10px"><b style="font-size:17px">${r.a}</b><button class="play" onclick="mSay(1)">${SPK}</button></div>
       <div class="opts two imgopts">${r.board.map(([ic,label],i)=>`<button class="opt mtile" id="mt${i}" onclick="missionTap(${i})" style="flex-direction:column;gap:6px">${objIcon(ic,34)}<span style="font-size:13px;font-weight:600">${label}</span></button>`).join("")}</div>
       <p class="muted" style="text-align:center;margin-top:10px" id="mprog">${s.pos} / ${r.seq.length}</p>`;
   }
-  setTimeout(()=>speak(r.a,target,RATE.nat),400);
 }
 function missionAnswer(i){
   const s=steps[idx], t=T(), r=s.rounds[s.mi];
@@ -1473,20 +1501,17 @@ function missionFail(){
 function rpNode(){
   const s=steps[idx], t=T(), node=s.nodes[s.ni];
   $("#chat").insertAdjacentHTML("beforeend",`<div class="msg them"><span class="who">${node.w==="C"?t.whoC:t.whoM}</span>${node.m[0]}<span class="tr sub">${node.m[1]}</span></div>`);
-  speak(node.m[0],target,RATE.nat);
   $("#dopts").innerHTML=node.o.map((o,j)=>`<button class="opt" data-j="${j}" onclick="rpPick(${j})"><span class="k">${j+1}</span><span>${o[0]}<br><span class="muted" style="font-size:13px">${o[1]}</span></span></button>`).join("");
   window.scrollTo(0,document.body.scrollHeight);
 }
 function rpPick(j){
   const s=steps[idx], t=T(), node=s.nodes[s.ni], o=node.o[j];
   $("#chat").insertAdjacentHTML("beforeend",`<div class="msg me"><span class="who">${t.whoY}</span>${o[0]}<span class="tr sub">${o[1]}</span></div>`);
-  speak(o[0],target,RATE.nat);
   $("#dopts").innerHTML="";
   const rescueRepeat=o[2]==="r"&&o[3]===undefined;
   setTimeout(()=>{
     if(rescueRepeat){
       $("#chat").insertAdjacentHTML("beforeend",`<div class="msg them slow"><span class="who">${node.w==="C"?t.whoC:t.whoM}</span>${node.m[0]}<span class="tr sub">${t.coach}</span></div>`);
-      speak(node.m[0],target,RATE.slow);
       $("#dopts").innerHTML=node.o.map((oo,k)=>`<button class="opt" data-j="${k}" onclick="rpPick(${k})"><span class="k">${k+1}</span><span>${oo[0]}<br><span class="muted" style="font-size:13px">${oo[1]}</span></span></button>`).join("");
       window.scrollTo(0,document.body.scrollHeight);
       return;
@@ -1530,7 +1555,7 @@ R.order=(d,t,sc)=>{
   setBar("", "", "", t.check, ()=>{
     const ok=strip(placed.map(i=>tiles[i]).join(" "))===strip(d.sentence);
     $("#slot").classList.add(ok?"ok":"err"); document.querySelectorAll(".tile").forEach(b=>b.onclick=null);
-    speak(d.sentence); libFinish(ok,t,d.sentence,d.trans);
+    libFinish(ok,t,d.sentence,d.trans);
   }, true);
 };
 
@@ -1555,15 +1580,13 @@ R.dialogue=(d,t,sc)=>{
   function step(){
     const s=d.steps[i]; pick=null;
     $("#chat").insertAdjacentHTML("beforeend",`<div class="msg them"><span class="who">${d.who}</span>${s.them[0]}<span class="tr">${s.them[1]}</span></div>`);
-    speak(s.them[0]);
-    $("#dopts").innerHTML=s.opts.map((o,j)=>`<button class="opt" data-i="${j}"><span class="k">${j+1}</span><span>${o[0]}<br><span class="muted" style="font-size:13px">${o[1]}</span></span></button>`).join("");
+        $("#dopts").innerHTML=s.opts.map((o,j)=>`<button class="opt" data-i="${j}"><span class="k">${j+1}</span><span>${o[0]}<br><span class="muted" style="font-size:13px">${o[1]}</span></span></button>`).join("");
     document.querySelectorAll("#dopts .opt").forEach(b=>b.onclick=()=>libChoose(b,()=>{pick=+b.dataset.i;$("#primary").disabled=false;}));
     setBar("", "", "", t.check, ()=>{
       const ok=pick===s.ans; if(!ok)misses++;
       document.querySelectorAll("#dopts .opt").forEach(b=>{b.disabled=true;if(+b.dataset.i===s.ans)b.classList.add("ok");else if(+b.dataset.i===pick)b.classList.add("err");b.classList.remove("sel");});
       $("#chat").insertAdjacentHTML("beforeend",`<div class="msg me"><span class="who">${d.me}</span>${s.opts[s.ans][0]}</div>`);
-      speak(s.opts[s.ans][0]);
-      const last=i===d.steps.length-1;
+            const last=i===d.steps.length-1;
       setBar(ok?"ok":"err", ok?t.correct:`${t.incorrect} ${s.opts[s.ans][0]}`, s.opts[s.ans][1], t.next, last?nextStep:()=>{i++;$("#dopts").innerHTML="";step();window.scrollTo(0,document.body.scrollHeight);});
     }, true);
   }
@@ -1580,7 +1603,7 @@ R.map=(d,t,sc)=>{
       ${d.stations.map((st,k)=>{const [x,y,w,h]=rooms[k];return `<g class="room" data-k="${k}" style="cursor:pointer"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1.5" fill="#fff" stroke="#d5d8de" stroke-width=".6"/><text x="${x+w/2}" y="${y+h/2+1.2}" font-size="${w<20?2.6:3}" font-weight="600" fill="#15181d" text-anchor="middle" font-family="Inter,sans-serif">${st[0]}</text></g>`}).join("")}
     </svg></div>
     <p class="muted" style="text-align:center" id="mapProg">1 / ${order.length}</p>`;
-  function ask(){ $("#tgt").textContent=order[i][1]; $("#tgtTr").innerHTML=`<button class="play" onclick="speak('${order[i][0]}')">${SPK}</button>`; speak(order[i][0]); $("#mapProg").textContent=`${i+1} / ${order.length}`; }
+  function ask(){ $("#tgt").textContent=order[i][1]; $("#tgtTr").innerHTML=`<button class="play" onclick="speak('${order[i][0]}')">${SPK}</button>`; $("#mapProg").textContent=`${i+1} / ${order.length}`; }
   document.querySelectorAll(".room").forEach(g=>g.onclick=()=>{
     if(i>=order.length)return;
     const r=g.querySelector("rect"), ok=d.stations[+g.dataset.k][0]===order[i][0];
@@ -1614,7 +1637,6 @@ R.rapid=(d,t,sc)=>{
     $("#bw").textContent=cur[0]; $("#bw").style.animation="none"; void $("#bw").offsetWidth; $("#bw").style.animation="";
     $("#ro").innerHTML=opts.map(o=>`<button class="opt" style="justify-content:center">${o[1]}</button>`).join("");
     document.querySelectorAll("#ro .opt").forEach(b=>b.onclick=()=>{ const ok=b.textContent===cur[1]; b.classList.add(ok?"ok":"err"); if(ok)score++; $("#rs").textContent=`${score} / ${q.length}`; setTimeout(()=>{i++;ask();},300); document.querySelectorAll("#ro .opt").forEach(x=>x.disabled=true); });
-    speak(cur[0]);
   }
   clearInterval(timerId);
   timerId=setInterval(()=>{ tl-=100/30; $("#tf").style.width=Math.max(0,tl)+"%"; if(tl<=0){ i++; ask(); } },100);
@@ -1627,7 +1649,6 @@ R.dict=(d,t,sc)=>{
   sc.innerHTML=`<div class="kicker">${t.dict}</div><div style="display:flex;justify-content:center;margin:10px 0 22px"><button class="play lg" onclick="speak('${d.text}')">${SPK.replace('width="20" height="20"','width="30" height="30"')}</button></div>
     <input class="field" id="dt" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="…">`;
   const f=$("#dt"); f.oninput=()=>$("#primary").disabled=!f.value.trim(); f.onkeydown=e=>{if(e.key==="Enter"&&!$("#primary").disabled)$("#primary").click();};
-  setTimeout(()=>speak(d.text),300);
   setBar("", "", "", t.check, ()=>{ const ok=strip(f.value)===strip(d.text); f.classList.add(ok?"ok":"err"); f.disabled=true; libFinish(ok,t,d.text,d.trans); }, true);
 };
 
